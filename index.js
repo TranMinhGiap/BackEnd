@@ -10,6 +10,10 @@ app.set('view engine', 'pug');
 app.set('views', './views')
 // =============== END PUG ================
 
+// static file
+app.use(express.static("public"))
+// end static file
+
 // ============= routes ==============
 route(app)
 // ============= end routes ==============
