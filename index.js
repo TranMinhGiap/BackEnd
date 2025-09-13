@@ -10,6 +10,7 @@ database.connect();
 //============== end database =============
 
 const route = require("./routes/client/index.route");
+const routeAdmin = require("./routes/admin/index.route");
 
 // =============== PUG ================
 app.set('view engine', 'pug');
@@ -21,6 +22,7 @@ app.use(express.static("public"))
 // end static file
 
 // ============= routes ==============
+routeAdmin(app)
 route(app)
 // ============= end routes ==============
 
