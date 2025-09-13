@@ -43,6 +43,7 @@
   border-radius: 12px;
   border: 1px solid #ddd;
   overflow: hidden;
+  height: 100%;
 }
 .inner-image{
   width: 100%;
