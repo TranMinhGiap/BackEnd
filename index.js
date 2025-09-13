@@ -3,6 +3,8 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT;
 
+const systemConfig = require('./config/system');
+
 const database = require('./config/database')
 
 //============== database =============
@@ -20,6 +22,10 @@ app.set('views', './views')
 // static file
 app.use(express.static("public"))
 // end static file
+
+// App local variable (Địng nghĩa biến toàn cụ nhằm sử dụng trong file pug nếu không muốn truyền qua controller)
+app.locals.prefixAdmin = systemConfig.prefixAdmin;
+// App local variable
 
 // ============= routes ==============
 routeAdmin(app)
