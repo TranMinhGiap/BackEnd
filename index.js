@@ -3,6 +3,12 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT;
 
+const database = require('./config/database')
+
+//============== database =============
+database.connect();
+//============== end database =============
+
 const route = require("./routes/client/index.route");
 
 // =============== PUG ================
