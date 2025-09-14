@@ -1,6 +1,7 @@
 const Product = require("../../models/product.modal");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
+const paginationHelper = require("../../helpers/pagination");
 
 module.exports.index = async (req, res) => {
   let params = {
@@ -22,18 +23,12 @@ module.exports.index = async (req, res) => {
   // End Search
   
   //Pagination
-  let objectPagination = {
+  const coutnProduct = await Product.countDocuments(params);
+  let objectPagination = paginationHelper({
     currentPage: 1,
     limitItems : 4,
     skip: 0
-  };
-  if(req.query.page){
-    objectPagination.currentPage = parseInt(req.query.page);
-    objectPagination.skip = (objectPagination.currentPage - 1) * objectPagination.limitItems;
-  }
-  const coutnProduct = await Product.countDocuments(params);
-  const totalPage = Math.ceil(coutnProduct / objectPagination.limitItems);
-  objectPagination.totalPage = totalPage;
+  }, req.query, coutnProduct);
   //End Pagination
 
   // ==== Truy vấn database dựa trên điều kiện params + trả kết quả về view hiển thị
