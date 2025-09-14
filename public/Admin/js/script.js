@@ -19,7 +19,7 @@ if(buttonsStatus.length > 0){
   })
 }
 // ==================== Loc san pham theo trang thai admin ===============
-// ==================== tim pham  admin ===============
+// ==================== tim san pham  admin ===============
 const formSearch = document.querySelector("#form-search");
 if(formSearch){
   let url = new URL(window.location.href);
@@ -36,4 +36,20 @@ if(formSearch){
     window.location.href = url.href;
   })
 }
-// ==================== tim pham  admin ===============
+// ==================== tim san pham  admin ===============
+
+// ==================== Pagination admin ===============
+const buttonsPagination = document.querySelectorAll("[button-pagination]");
+if(buttonsPagination){
+  let url = new URL(window.location.href);
+  buttonsPagination.forEach(button => {
+    button.addEventListener("click", () => {
+      const pageActive = button.getAttribute("button-pagination");
+      if(pageActive){
+        url.searchParams.set("page", pageActive);
+        window.location.href = url.href;
+      }
+    })
+  })
+}
+// ==================== Pagination admin ===============
