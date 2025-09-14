@@ -1,5 +1,6 @@
 const Product = require("../../models/product.modal");
 const filterStatusHelper = require("../../helpers/filterStatus");
+const searchHelper = require("../../helpers/search");
 
 module.exports.index = async (req, res) => {
   let params = {
@@ -14,13 +15,9 @@ module.exports.index = async (req, res) => {
   }
   // End xử lý lọc theo trạng thái
   // Search
-  let keyword = "";
-  if(req.query.keyword){
-    keyword = req.query.keyword;
-    // params.title = keyword; => Tìm kiếm chính xác title = keyword
-    const regex = new RegExp(keyword, "i");
-    params.title = regex;
-    // Chỉ cần title chứa keyword do mongo ho tro tim kiem theo regex
+  const objectSearch = searchHelper(req.query);
+  if(objectSearch.regex){
+    params.title = objectSearch.regex;
   }
   // End Search
   // Truy vấn database dựa trên điều kiện params + trả kết quả về view hiển thị
@@ -30,6 +27,6 @@ module.exports.index = async (req, res) => {
     pageTitle: "Products Admin",
     products: products,
     filterStatus: filterStatus,
-    keyword: keyword
+    keyword: objectSearch.keyword
   })
 }
