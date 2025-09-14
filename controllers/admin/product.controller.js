@@ -1,4 +1,5 @@
-const Product = require("../../models/product.modal")
+const Product = require("../../models/product.modal");
+const filterStatusHelper = require("../../helpers/filterStatus");
 
 module.exports.index = async (req, res) => {
   let params = {
@@ -6,31 +7,7 @@ module.exports.index = async (req, res) => {
   }
   // xử lý lọc theo trạng thái
   // Button trạng thái
-  let filterStatus = [
-    {
-      name: "Tất cả",
-      status: "",
-      class: ""
-    },
-    {
-      name: "Hoạt động",
-      status: "active",
-      class: ""
-    },
-    {
-      name: "Dừng hoạt động",
-      status: "inactive",
-      class: ""
-    },
-  ]
-  if(req.query.status){
-    const index = filterStatus.findIndex(item => item.status === req.query.status);
-    filterStatus[index].class = "active"
-  }
-  else{
-    const index = filterStatus.findIndex(item => item.status === "");
-    filterStatus[index].class = "active"
-  }
+  const filterStatus = filterStatusHelper(req.query);
   // End button trạng thái
   if(req.query.status){
     params.status = req.query.status;
