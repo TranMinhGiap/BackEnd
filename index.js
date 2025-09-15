@@ -2,10 +2,15 @@ const express = require('express');
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT;
+var methodOverride = require('method-override')
 
 const systemConfig = require('./config/system');
 
 const database = require('./config/database')
+
+// Override Method
+app.use(methodOverride('_method'))
+// End Override Method
 
 //============== database =============
 database.connect();
