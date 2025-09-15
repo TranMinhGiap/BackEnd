@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT;
-var methodOverride = require('method-override')
+const methodOverride = require('method-override')
+const bodyParser = require('body-parser')
 
 const systemConfig = require('./config/system');
 
@@ -11,6 +12,10 @@ const database = require('./config/database')
 // Override Method
 app.use(methodOverride('_method'))
 // End Override Method
+
+// Giúp BE lấy được dữ liệu từ body khi gửi form bằng phương thức != GET
+app.use(bodyParser.urlencoded())
+// parse application/x-www-form-urlencoded
 
 //============== database =============
 database.connect();

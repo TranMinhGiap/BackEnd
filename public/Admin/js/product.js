@@ -34,3 +34,62 @@ if (buttonsChangeStatus.length > 0) {
   });
 }
 // End Change Status
+
+// CheckBox
+const checkboxMulti = document.querySelector("[checkbox-multi]");
+if(checkboxMulti){
+  const inputCheckAll = checkboxMulti.querySelector("input[name='checkall']");
+  const inputsId = checkboxMulti.querySelectorAll("input[name='id']")
+  
+  inputCheckAll.addEventListener('click', () => {
+    if(inputCheckAll.checked){
+      inputsId.forEach(input => {
+        input.checked = true
+      });
+    }
+    else{
+      inputsId.forEach(input => {
+        input.checked = false
+      });
+    }
+  })
+  inputsId.forEach(input => {
+    input.addEventListener('click', () => {
+      const countChecked = checkboxMulti.querySelectorAll("input[name='id']:checked").length
+      if(countChecked === inputsId.length){
+        inputCheckAll.checked = true;
+      }
+      else{
+        inputCheckAll.checked = false;
+      }
+    })
+  })
+}
+// End CheckBox
+
+// Form Change Multi
+const formChangeMulti = document.querySelector("[form-change-multi]");
+if(formChangeMulti){
+  formChangeMulti.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const checkboxMulti = document.querySelector("[checkbox-multi]");
+    const inputChecked  = checkboxMulti.querySelectorAll("input[name='id']:checked");
+
+    if(inputChecked.length > 0){
+      let ids = [];
+      const inputIds = formChangeMulti.querySelector("input[name='ids']");
+      inputChecked.forEach(input => {
+        const inputId = input.value;
+        // Thuộc tính có sẵn mặc định thì không cần getAttribute("value");
+        ids.push(inputId);
+      })
+      inputIds.value = ids.join(", ");
+      formChangeMulti.submit();
+    }
+    else{
+      alert("Chon it nhat 1 ban ghi")
+    }
+    console.log(inputChecked);
+  })
+}
+// End Form Change Multi

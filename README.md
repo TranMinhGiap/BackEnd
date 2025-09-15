@@ -8,4 +8,6 @@
 
 # File Pug sau khi biên dịch thực chất chỉ là HTML, nên bạn hoàn toàn có thể nhúng file JavaScript giống như trong HTML.
 
-# req.params.name = "giap" là nó dựa vào url của trình duyệt bên phía client còn cái Backend pattern để giúp back end đối chiếu khớp thì nó sẽ chạy vào controller tương ứng để xử lý logic. Ví dụ http://localhost:3000/user/giap thì Express backend nhận request này, đem URL /user/giap đi so với pattern /user/:name. Nếu khớp, thì Express sẽ “giải” :name = giap → đưa vào req.params nghĩa là nó sẽ lấy tên tham số động và giá trị ánh xạ tương ứng để tạo thành key: value đặt trong 1 object và đưa vào req.params
+# req.params.name = "giap" là nó dựa vào url của trình duyệt bên phía client còn cái Backend pattern để giúp back end đối chiếu khớp thì nó sẽ chạy vào controller tương ứng để xử lý logic. Ví dụ http://localhost:3000/user/giap thì Express backend nhận request này, đem URL /user/giap đi so với pattern /user/:name. Nếu khớp, thì Express sẽ “giải” :name = giap → đưa vào req.params nghĩa là nó sẽ lấy tên tham số động và giá trị ánh xạ tương ứng để tạo thành key: value đặt trong 1 object và đưa vào req.params. Chú ý input chỉ gửi được string nên sang kia ta cần convert lại nếu là số, ...
+
+# Ta có thể gửi dữ liệu sang backend bằng nhiều cách thứ nhất là truyền theo params (...?...). Thứ  là thông qua form nó lấy giá trị trong ô input + name thành object để gửi và req.params cũng nhận được. Cách thứ 3 là thông qua tham số động nó cũng tạo thành object trong params như form để xử lý thông tin
