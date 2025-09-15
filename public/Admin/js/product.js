@@ -75,6 +75,17 @@ if(formChangeMulti){
     const checkboxMulti = document.querySelector("[checkbox-multi]");
     const inputChecked  = checkboxMulti.querySelectorAll("input[name='id']:checked");
 
+    const typeChange = e.target.elements.type.value;
+    if(typeChange === "deleted-all"){
+      const isConfirm = confirm("Bạn có muốn xóa những sản phẩm đã chọn ?");
+      if(!isConfirm){
+        return;
+      }
+    }
+    else if(typeChange === ""){
+      alert("Vui lòng chọn hành động");
+      return;
+    }
     if(inputChecked.length > 0){
       let ids = [];
       const inputIds = formChangeMulti.querySelector("input[name='ids']");
@@ -89,7 +100,6 @@ if(formChangeMulti){
     else{
       alert("Chon it nhat 1 ban ghi")
     }
-    console.log(inputChecked);
   })
 }
 // End Form Change Multi
