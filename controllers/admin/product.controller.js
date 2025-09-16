@@ -33,7 +33,10 @@ module.exports.index = async (req, res) => {
   //End Pagination
 
   // ==== Truy vấn database dựa trên điều kiện params + trả kết quả về view hiển thị
-  const products = await Product.find(params).limit(objectPagination.limitItems).skip(objectPagination.skip);
+  const products = await Product.find(params)
+    .sort({ position: "desc" })
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip);
   // console.log(req.query);
   res.render("admin/pages/products/index", {
     pageTitle: "Products Admin",
@@ -68,6 +71,16 @@ module.exports.changeMulti = async (req, res) => {
         deleted: true,
         deletedAt: new Date()
       });
+      break;
+    case "change-position":
+      for (const item of ids) {
+        let [id, position] = item.split("-");
+        position = parseInt(position);
+        // console.log(id)
+        // console.log(position)
+        await Product.updateOne({ _id: id }, { position: position });
+        // Do giá trị update khác nhau nên buộc phải dùng for để update cho từng phần tử với các giá trị tưởng ứng
+      }
       break;
     default:
       break;

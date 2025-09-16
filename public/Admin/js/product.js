@@ -92,7 +92,14 @@ if(formChangeMulti){
       inputChecked.forEach(input => {
         const inputId = input.value;
         // Thuộc tính có sẵn mặc định thì không cần getAttribute("value");
-        ids.push(inputId);
+        if(typeChange === "change-position"){
+          const position = input.closest("tr").querySelector("input[name='position']").value;
+          ids.push(`${inputId}-${position}`);
+          // Nếu là change-position thì ta nối thêm vị trí vào id của sản phẩm (inputId đã lưu id của sản phẩm) 
+        }
+        else{
+          ids.push(inputId);
+        }
       })
       inputIds.value = ids.join(", ");
       formChangeMulti.submit();
