@@ -5,15 +5,7 @@ const router = express.Router();
 const controller = require("../../controllers/client/product.controller");
 
 router.get('/', controller.index)
+router.get('/:slug', controller.detail)
 
-// router.get('/:id', (req, res) => {
-//   res.render("client/pages/products/index")
-// })
-// router.get('/edit', (req, res) => {
-//   res.render("client/pages/products/index")
-// })
-// router.get('/update', (req, res) => {
-//   res.render("client/pages/products/index")
-// })
 
 module.exports = router;

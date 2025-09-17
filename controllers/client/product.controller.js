@@ -1,5 +1,6 @@
 const Product = require("../../models/product.modal")
 
+// [GET] /product
 module.exports.index = async (req, res) => {
 
   const products = await Product.find({
@@ -19,4 +20,21 @@ module.exports.index = async (req, res) => {
     products: newProduct
   })
   // Trong view, bạn có thể sử dụng các key của object này. => coi nó là biến cũng được
+}
+// [GET] /product/:slug
+module.exports.detail = async (req, res) => {
+  try {
+    const find = {
+      deleted: false,
+      slug: req.params.slug,
+      status: "active"
+    };
+    const product = await Product.findOne(find);
+    res.render("client/pages/products/detail", {
+      pageTitle: product.title,
+      product: product
+    })
+  } catch (error) {
+
+  }
 }
