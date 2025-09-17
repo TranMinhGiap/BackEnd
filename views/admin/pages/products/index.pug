@@ -87,6 +87,10 @@ block main
                   data-id=item.id
                   button-delete
                 ) Xóa
+                a(
+                  href=`${prefixAdmin}/products/detail/${item.id}`
+                  class="btn btn-secondary btn-sm ml-1"
+                ) Chi tiết
   
   +pagination(pagination)
 

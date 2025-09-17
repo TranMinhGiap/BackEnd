@@ -163,3 +163,22 @@ module.exports.editPatch = async (req, res) => {
   }
   res.redirect(req.get("Referrer") || "/admin/products");
 }
+// [GET] admin/products/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const find = {
+      deleted: false,
+      _id: req.params.id
+    };
+
+    const product = await Product.findOne(find);
+
+    res.render("admin/pages/products/detail", {
+      pageTitle: `${product.title}`,
+      product: product
+    })
+  } catch (error) {
+    // Co the hien thi them thong bao nhung dang loi thu vien nhu da de cap truoc do nen tam thoi bo qua thong bao
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+  }
+}
