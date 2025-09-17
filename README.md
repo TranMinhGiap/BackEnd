@@ -19,3 +19,5 @@
 # Tạo 1 thuộc tính nhằm mục đích tái sử dụng như class trong css ấy thêm thuộc tính vào chỗ cần thì nó sẽ có tác dụng
 
 # Chỗ router truyền bao nhiêu hàm cũng được, nó đóng vai trò như middleware để xử lý 1 request theo thứ tự từ trái sang phải trước khi cho controller xử lý. Bất kỳ hàm nào bạn đưa vào trong router.get(...), router.post(...), app.use(...) … thì đều là middleware.Middleware trong Express thực chất chỉ là một hàm được express truyền vào 3 tham số (req, res, next), nếu không hợp lệ → redirect hoặc báo lỗi và ngược lại nếu hợp lệ → gọi next() để chạy tiếp.. Controller cũng chỉ là một loại middleware đặc biệt, thường để ở cuối cùng để xử lý nghiệp vụ chính. => Middleware nào kết thúc request (res.send, res.redirect, res.json …) thì request dừng ở đó, và controller không được chạy vì có qua middleware đâu :)) 
+
+# pug import cần đuôi file và không cần "" còn js thì cần "" và không cần đuôi

@@ -124,3 +124,42 @@ module.exports.createPost = async (req, res) => {
   await product.save();
   res.redirect(`${systemConfig.prefixAdmin}/products`);
 }
+// [GET] admin/products/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const find = {
+      deleted: false,
+      _id: req.params.id
+    };
+
+    const product = await Product.findOne(find);
+
+    res.render("admin/pages/products/edit", {
+      pageTitle: "Products Edit",
+      product: product
+    })
+  } catch (error) {
+    // Co the hien thi them thong bao nhung dang loi thu vien nhu da de cap truoc do nen tam thoi bo qua thong bao
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+  }
+}
+// [PATCH] admin/products/edit/:id
+module.exports.editPatch = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    if (req.file) {
+      req.body.thumbnail = `/uploads/${req.file.filename}`
+    }
+    req.body.price = parseInt(req.body.price)
+    req.body.discountPercentage = parseInt(req.body.discountPercentage)
+    req.body.stock = parseInt(req.body.stock)
+    req.body.position = parseInt(req.body.position)
+
+    await Product.updateOne({ _id: id }, req.body);
+
+  } catch (error) {
+
+  }
+  res.redirect(req.get("Referrer") || "/admin/products");
+}
