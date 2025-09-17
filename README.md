@@ -23,3 +23,7 @@
 # pug import cần đuôi file và không cần "" còn js thì cần "" và không cần đuôi
 
 # href của thẻ a mặc định điền thẳng url trên trình duyệt => GET trong khi đó muôn sử dụng phương thức như post, patch, delete thì ta phải dùng form và phải custom thì form mặc định chỉ có 2 phương thức là get và post
+
+# Khi đẩy lên server thì nó tự động install các thư viện thông qua file package.json nên không cần đẩy thư viện node_modules
+
+# __dirname là cấu trúc thư mục khi đẩy lên online thì nó không hiểu / hay ./, ... là gì nên ta dùng __dirname, nó dùng được cả ở local và online

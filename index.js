@@ -26,11 +26,11 @@ const routeAdmin = require("./routes/admin/index.route");
 
 // =============== PUG ================
 app.set('view engine', 'pug');
-app.set('views', './views')
+app.set('views', `${__dirname}/views`)
 // =============== END PUG ================
 
 // static file
-app.use(express.static("public"))
+app.use(express.static(`${__dirname}/public`))
 // end static file
 
 // App local variable (Địng nghĩa biến toàn cụ nhằm sử dụng trong file pug nếu không muốn truyền qua controller)
