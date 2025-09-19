@@ -1,4 +1,5 @@
 const express = require('express');
+var path = require('path');
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT;
@@ -16,6 +17,10 @@ app.use(methodOverride('_method'))
 // Giúp BE lấy được dữ liệu từ body khi gửi form bằng phương thức != GET
 app.use(bodyParser.urlencoded())
 // parse application/x-www-form-urlencoded
+
+// Tiny MCE
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
+// End Tiny MCE
 
 //============== database =============
 database.connect();
