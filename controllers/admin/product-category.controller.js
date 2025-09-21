@@ -1,5 +1,6 @@
 const systemConfig = require("../../config/system");
 const ProductCategory = require("../../models/product-category.modal");
+const createTreeHelper = require("../../helpers/createTree");
 
 // [GET] admin/products-category
 module.exports.index = async (req, res) => {
@@ -8,9 +9,10 @@ module.exports.index = async (req, res) => {
       deleted: false,
     }
     const records = await ProductCategory.find(params);
+    const newRecords = createTreeHelper.createTree(records);
     res.render("admin/pages/products-category/index", {
       pageTitle: "Product-Category",
-      records: records
+      records: newRecords
     })
   } catch (error) {
     console.error(error);
@@ -19,10 +21,21 @@ module.exports.index = async (req, res) => {
 }
 
 // [GET] admin/products-category/create
-module.exports.create = (req, res) => {
-  res.render("admin/pages/products-category/create", {
-    pageTitle: "Create Product-Category"
-  })
+module.exports.create = async (req, res) => {
+  try {
+    let params = {
+      deleted: false,
+    }
+    const records = await ProductCategory.find(params);
+    const newRecords = createTreeHelper.createTree(records);
+    res.render("admin/pages/products-category/create", {
+      pageTitle: "Create Product-Category",
+      category: newRecords
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi lấy danh mục!");
+  }
 }
 
 // [POST] admin/products-category/create
