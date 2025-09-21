@@ -4,7 +4,7 @@ mixin table-tree(items, level = 1)
     tr 
       th 
         input(type="checkbox" name="id" value=item.id)
-      td #{prefix.split(" ").length - 1}
+      td #{item.index}
       td
         img(src=item.thumbnail alt=item.title width="90px" height="auto")
       td #{prefix}#{item.title}
