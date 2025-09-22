@@ -157,9 +157,9 @@ module.exports.editPatch = async (req, res) => {
   const id = req.params.id;
 
   try {
-    if (req.file) {
-      req.body.thumbnail = `/uploads/${req.file.filename}`
-    }
+    // if (req.file) {
+    //   req.body.thumbnail = `/uploads/${req.file.filename}`
+    // }
     req.body.price = parseInt(req.body.price)
     req.body.discountPercentage = parseInt(req.body.discountPercentage)
     req.body.stock = parseInt(req.body.stock)
@@ -170,7 +170,7 @@ module.exports.editPatch = async (req, res) => {
   } catch (error) {
 
   }
-  res.redirect(req.get("Referrer") || "/admin/products");
+  res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/products`);
 }
 // [GET] admin/products/detail/:id
 module.exports.detail = async (req, res) => {

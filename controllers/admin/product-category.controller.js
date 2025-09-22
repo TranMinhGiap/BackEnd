@@ -56,3 +56,35 @@ module.exports.createPost = async (req, res) => {
   }
   res.redirect(`${systemConfig.prefixAdmin}/products-category`);
 }
+// [GET] admin/products-category/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const params = {
+      deleted: false,
+    };
+    const category = await ProductCategory.find(params);
+    const newcategory = createTreeHelper.createTree(category);
+    params._id = req.params.id;
+    const records = await ProductCategory.findOne(params);
+    res.render(`admin/pages/products-category/edit`, {
+      pageTitle: "Chỉnh sửa danh mục sản phẩm",
+      records: records,
+      categoryParent: newcategory
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi tạo form chỉnh sửa danh mục!");
+  }
+}
+// [PATCH] admin/products-category/edit/:id
+module.exports.editPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+    req.body.position = parseInt(req.body.position);
+    await ProductCategory.updateOne({ _id: id }, req.body);
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/products-category`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi chỉnh sửa danh mục!");
+  }
+}
