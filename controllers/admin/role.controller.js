@@ -39,3 +39,31 @@ module.exports.createPost = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi hiển thị nhóm phân quyền");
   }
 }
+// [GET] /admin/roles/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const params = {
+      deleted: false,
+      _id: req.params.id
+    };
+    const record = await Role.findOne(params);
+    res.render("admin/pages/roles/edit", {
+      pageTitle: "Chỉnh sửa nhóm quyền",
+      record: record
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi chỉnh sửa nhóm quyền");
+  }
+}
+// [PATCH] /admin/roles/edit/:id
+module.exports.editPatch = async (req, res) => {
+  try {
+    const idRole = req.params.id;
+    await Role.updateOne({ _id: idRole }, req.body);
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/roles`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi chỉnh sửa nhóm quyền");
+  }
+}
