@@ -2,6 +2,7 @@
 const dashboardRouter = require('./dashboard.route');
 const productRouter = require('./product.route');
 const productCategorRouter = require('./product-category.route');
+const roleRouter = require("./role.route");
 const systemConfig = require('../../config/system');
 
 module.exports = (app) => {
@@ -10,4 +11,5 @@ module.exports = (app) => {
   //Express tự normalize thành / (không bị //). => giống nó tự gộp
   app.use(pathAdmin + '/products', productRouter)
   app.use(pathAdmin + '/products-category', productCategorRouter)
+  app.use(pathAdmin + '/roles', roleRouter)
 }
