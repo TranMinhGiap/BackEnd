@@ -2,6 +2,8 @@ const Product = require("../../models/product.modal");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
+const ProductCategory = require("../../models/product-category.modal");
+const createTreeHelper = require("../../helpers/createTree");
 
 const systemConfig = require("../../config/system");
 
@@ -109,9 +111,19 @@ module.exports.deleteItem = async (req, res) => {
 }
 // [GET] admin/products/create
 module.exports.create = async (req, res) => {
-  res.render("admin/pages/products/create", {
-    pageTitle: "Products Create",
-  })
+  try {
+    let params = {
+      deleted: false,
+    }
+    const category = await ProductCategory.find(params);
+    const newCategory = createTreeHelper.createTree(category);
+    res.render("admin/pages/products/create", {
+      pageTitle: "Products Create",
+      category: newCategory
+    })
+  } catch (error) {
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/products`);
+  }
 }
 // [POST] admin/products/create
 module.exports.createPost = async (req, res) => {
@@ -136,16 +148,19 @@ module.exports.createPost = async (req, res) => {
 // [GET] admin/products/edit/:id
 module.exports.edit = async (req, res) => {
   try {
-    const find = {
+    const params = {
       deleted: false,
-      _id: req.params.id
     };
+    const category = await ProductCategory.find(params);
+    const newcategory = createTreeHelper.createTree(category);
 
-    const product = await Product.findOne(find);
+    params._id = req.params.id;
+    const product = await Product.findOne(params);
 
     res.render("admin/pages/products/edit", {
       pageTitle: "Products Edit",
-      product: product
+      product: product,
+      category: newcategory
     })
   } catch (error) {
     // Co the hien thi them thong bao nhung dang loi thu vien nhu da de cap truoc do nen tam thoi bo qua thong bao
