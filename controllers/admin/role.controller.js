@@ -67,3 +67,21 @@ module.exports.editPatch = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi chỉnh sửa nhóm quyền");
   }
 }
+// [GET] /admin/roles/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const idRole = req.params.id;
+    const params = {
+      deleted: false,
+      _id: idRole
+    }
+    const record = await Role.findOne(params);
+    res.render("admin/pages/roles/detail", {
+      pageTitle: "Chi tiết nhóm quyền",
+      record: record
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xem chi tiết nhóm quyền");
+  }
+}
