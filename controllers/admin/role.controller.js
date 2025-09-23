@@ -93,6 +93,6 @@ module.exports.delete = async (req, res) => {
     res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/roles`);
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Có lỗi xảy ra khi xem chi tiết nhóm quyền");
+    return res.status(500).send("Có lỗi xảy ra khi xóa tiết nhóm quyền");
   }
 }

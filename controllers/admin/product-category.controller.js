@@ -88,3 +88,14 @@ module.exports.editPatch = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi chỉnh sửa danh mục!");
   }
 }
+// [DELETE] admin/products-category/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await ProductCategory.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/products-category`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xóa danh mục!");
+  }
+}

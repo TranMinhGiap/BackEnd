@@ -32,6 +32,11 @@ block main
         tbody 
           +table-tree(records)
         
-
-  //- script(src="/Admin/js/product.js") 
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`${prefixAdmin}/products-category/delete`
+  ) 
+  script(src="/Admin/js/product-category.js") 
   
