@@ -85,3 +85,14 @@ module.exports.detail = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi xem chi tiết nhóm quyền");
   }
 }
+// [DELETE] /admin/roles/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const idRole = req.params.id;
+    await Role.updateOne({ _id: idRole }, { deleted: true, deletedAt: new Date() });
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/roles`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xem chi tiết nhóm quyền");
+  }
+}
