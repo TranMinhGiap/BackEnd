@@ -99,3 +99,27 @@ module.exports.delete = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi xóa danh mục!");
   }
 }
+// [GET] admin/products-category/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const params = {
+      deleted: false,
+      _id: id
+    }
+    const record = await ProductCategory.findOne(params);
+    const parentCategoryId = record.parent_id;
+    let categoryParent = null;
+    if(parentCategoryId){
+      categoryParent = await ProductCategory.findOne({ _id: record.parent_id })
+    }
+    res.render("admin/pages/products-category/detail", {
+      pageTitle: "Chi tiết danh mục",
+      record: record,
+      categoryParent: categoryParent
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xem chi tiết danh mục!");
+  }
+}

@@ -1,0 +1,34 @@
+extends ../../layouts/default.pug
+
+block main
+  if (record.title)
+    div(class="mb-4")
+      h1(class="mb-4") #{record.title}
+
+  if (categoryParent)
+    div(class="mb-4")
+      b Danh mục: #{categoryParent.title}
+
+  if (record.description)
+    div(class="mb-4") !{record.description}
+
+  if (record.position)
+    div(class="mb-4") Vị trí: 
+      b #{record.position}
+
+  if (record.status)
+    div(class="mb-4")
+      span Trang thái: 
+      if record.status == "active"
+        span.badge.badge-success Hoạt động
+      else
+        span.badge.badge-danger Không hoạt động
+
+  if (record.thumbnail)
+    div(class="mb-4")
+      img(src=record.thumbnail style="width:100px")
+
+  a(
+    href=`${prefixAdmin}/products-category/edit/${record.id}`
+    class="btn btn-outline-warning"
+  ) Chỉnh sửa
