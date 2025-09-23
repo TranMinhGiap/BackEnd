@@ -96,3 +96,34 @@ module.exports.delete = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi xóa tiết nhóm quyền");
   }
 }
+// [GET] /admin/roles/permissions
+module.exports.permissions = async (req, res) => {
+  try {
+    let params = {
+      deleted: false
+    };
+    const records = await Role.find(params);
+    res.render("admin/pages/roles/permissions", {
+      pageTitle: "Phân quyền",
+      records: records
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi phân quyền");
+  }
+}
+// [PATCH] /admin/roles/permissions
+module.exports.permissionsPatch = async (req, res) => {
+  try {
+    const permissions = JSON.parse(req.body.permissions);
+    for (let item of permissions){
+      const id = item.id;
+      const permissions = item.permissions;
+      await Role.updateOne({ _id: id }, { permissions: permissions });
+    }
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/roles`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi cập nhật quyền");
+  }
+}
