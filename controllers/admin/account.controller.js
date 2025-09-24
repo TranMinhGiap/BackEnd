@@ -116,3 +116,36 @@ module.exports.editPatch = async (req, res) => {
   }
 }
 // Có thể thông báo nhưng lỗi thư viện hay sao ý nên chưa làm :))
+
+// [GET] /admin/accounts/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const idAccount = req.params.id;
+    let params = {
+      _id: idAccount,
+      deleted: false
+    }
+    const record = await Account.findOne(params).select("-password -token");
+    const role = await Role.findOne({ _id: record.role_id, deleted: false });
+    record.role = role.title;
+    res.render("admin/pages/account/detail", {
+      pageTitle: "Tài khoản",
+      record: record
+  })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xem chi tiết tài khoản");
+  }
+}
+
+// [DELETE] /admin/accounts/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const idAccount = req.params.id;
+    await Account.updateOne({ _id: idAccount }, { deleted: true, deletedAt: new Date() });
+    res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/accounts`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xóa tài khoản");
+  }
+}

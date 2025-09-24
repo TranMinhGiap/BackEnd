@@ -70,3 +70,11 @@ block main
                   href=`${prefixAdmin}/accounts/detail/${item.id}`
                   class="btn btn-secondary btn-sm ml-1"
                 ) Chi tiết
+  form(
+    action=""
+    method="POST"
+    id="form-delete-item"
+    data-path=`${prefixAdmin}/accounts/delete`
+  )
+
+  script(src="/Admin/js/product-category.js")
