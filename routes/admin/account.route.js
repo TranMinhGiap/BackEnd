@@ -8,7 +8,7 @@ const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware")
 // Image
 
 // Validate
-const validate = require("../../middlewares/admin/account.middleware")
+const validate = require("../../validates/admin/account.validate")
 // Validate
 
 //controller
