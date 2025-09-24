@@ -63,3 +63,7 @@ header .inner-logo a {
   display: none;
 }
 /* End Image Preview */
+
+button{
+  border: none;
+}
