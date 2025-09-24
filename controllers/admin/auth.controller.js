@@ -37,3 +37,14 @@ module.exports.loginPost = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi đăng nhập");
   }
 }
+
+// [GET] /admin/auth/logout
+module.exports.logout = async (req, res) => {
+  try {
+    res.clearCookie("token")
+    res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi đăng xuất");
+  }
+}
