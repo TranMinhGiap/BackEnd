@@ -5,6 +5,7 @@ require("dotenv").config();
 const port = process.env.PORT;
 const methodOverride = require('method-override')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 
 const systemConfig = require('./config/system');
 
@@ -17,6 +18,9 @@ app.use(methodOverride('_method'))
 // Giúp BE lấy được dữ liệu từ body khi gửi form bằng phương thức != GET
 app.use(bodyParser.urlencoded())
 // parse application/x-www-form-urlencoded
+
+// Giúp BE phân tích cookie trong req của client gửi lên
+app.use(cookieParser())
 
 // Tiny MCE
 app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));

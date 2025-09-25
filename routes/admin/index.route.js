@@ -6,14 +6,15 @@ const roleRouter = require("./role.route");
 const accountRouter = require("./account.route");
 const authRouter = require("./auth.route");
 const systemConfig = require('../../config/system');
+const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
 module.exports = (app) => {
   const pathAdmin = systemConfig.prefixAdmin
-  app.use(pathAdmin + '/dashboard', dashboardRouter)
+  app.use(pathAdmin + '/dashboard', authMiddleware.requireAuth, dashboardRouter)
   //Express tự normalize thành / (không bị //). => giống nó tự gộp
-  app.use(pathAdmin + '/products', productRouter)
-  app.use(pathAdmin + '/products-category', productCategorRouter)
-  app.use(pathAdmin + '/roles', roleRouter)
-  app.use(pathAdmin + '/accounts',accountRouter)
+  app.use(pathAdmin + '/products', authMiddleware.requireAuth, productRouter)
+  app.use(pathAdmin + '/products-category', authMiddleware.requireAuth, productCategorRouter)
+  app.use(pathAdmin + '/roles', authMiddleware.requireAuth, roleRouter)
+  app.use(pathAdmin + '/accounts', authMiddleware.requireAuth, accountRouter)
   app.use(pathAdmin + '/auth',authRouter)
 }
