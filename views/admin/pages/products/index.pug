@@ -52,6 +52,7 @@ block main
               th Giá
               th Vị trí
               th Trạng thái
+              th Người tạo
               th Hành động
           tbody 
             each item, idx in products
@@ -103,6 +104,9 @@ block main
                       span(
                         class="badge badge-danger"
                       ) Dừng hoạt động
+                td 
+                  b #{item.userName || "Quản trị viên"}
+                  div #{item.date ? item.date.toLocaleDateString("vi-VN") : "--/--/----"}
                 td
                   if(role.permissions.includes("products_edit"))
                     a(

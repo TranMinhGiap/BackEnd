@@ -1,4 +1,5 @@
 const Product = require("../../models/product.modal");
+const Account = require("../../models/account.modal");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
@@ -51,6 +52,16 @@ module.exports.index = async (req, res) => {
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
   // console.log(req.query);
+  // User tao
+  for (const product of products) {
+    const idAccount = product.createdBy.account_id;
+    const user = await Account.findOne({ _id: idAccount, deleted: false });
+    if(user){
+      product.userName = user.fullName;
+      product.date = product.createdBy.createdAt
+    }
+  }
+  // End User tao
   res.render("admin/pages/products/index", {
     pageTitle: "Products Admin",
     products: products,
@@ -140,6 +151,9 @@ module.exports.createPost = async (req, res) => {
   }
   else{
     req.body.position = parseInt(req.body.position)
+  }
+  req.body.createdBy = {
+    account_id: res.locals.user.id
   }
   const product = new Product(req.body);
   await product.save();
