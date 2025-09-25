@@ -91,9 +91,13 @@ module.exports.changeMulti = async (req, res) => {
       await Product.updateMany({ _id: { $in: ids} }, { status: "inactive" });
       break;
     case "deleted-all":
+      const infoDelete = {
+        account_id: res.locals.user.id,
+        deletedAt: new Date()
+      }
       await Product.updateMany({ _id: { $in: ids} }, { 
         deleted: true,
-        deletedAt: new Date()
+        deletedBy: infoDelete
       });
       break;
     case "change-position":
@@ -115,7 +119,11 @@ module.exports.changeMulti = async (req, res) => {
 // [DELETE] admin/products/delete/:id
 module.exports.deleteItem = async (req, res) => {
   const idProduct = req.params.id;
-  await Product.updateOne({ _id: idProduct }, { deleted: true, deletedAt: new Date() });
+  const infoDelete = {
+    account_id: res.locals.user.id,
+    deletedAt: new Date()
+  }
+  await Product.updateOne({ _id: idProduct }, { deleted: true, deletedBy: infoDelete });
   // Xóa mềm
   // Xóa cứng: await Product.deleteOne({ _id: idProduct });
   res.redirect(req.get("Referrer") || "/admin/products");
