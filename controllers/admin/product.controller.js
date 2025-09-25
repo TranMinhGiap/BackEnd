@@ -218,6 +218,12 @@ module.exports.detail = async (req, res) => {
     };
 
     const product = await Product.findOne(find);
+    const idAccount = product.createdBy.account_id;
+    const user = await Account.findOne({ _id: idAccount, deleted: false });
+    if(user){
+      product.userName = user.fullName;
+      product.date = product.createdBy.createdAt
+    }
 
     res.render("admin/pages/products/detail", {
       pageTitle: `${product.title}`,

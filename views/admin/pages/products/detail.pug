@@ -29,6 +29,10 @@ block main
         else
           span.badge.badge-danger Không hoạt động
 
+    div(class="mb-4") Người tạo:
+      b #{product.userName || "Quản trị viên"}
+    div(class="mb-4") Thời gian tạo:
+      b #{product.date ? product.date.toLocaleString("vi-VN") : "--/--/----"}
     if (product.position)
       div(class="mb-4") Vị trí: 
         b #{product.position}
