@@ -9,6 +9,13 @@ const productCategorySchema = new mongoose.Schema(
       type: String,
       default: ""
     },
+    createdBy: {
+      account_id: String,
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    },
     description: String,
     thumbnail: String,
     status: String,
@@ -17,7 +24,10 @@ const productCategorySchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    deletedAt: Date,
+    deletedBy: {
+      account_id: String,
+      deletedAt: Date
+    },
     slug: { type: String, slug: "title", unique: true }
   }, {
     timestamps: true

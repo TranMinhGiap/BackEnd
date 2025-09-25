@@ -1,5 +1,6 @@
 const systemConfig = require("../../config/system");
 const ProductCategory = require("../../models/product-category.modal");
+const Account = require("../../models/account.modal");
 const createTreeHelper = require("../../helpers/createTree");
 
 // [GET] admin/products-category
@@ -9,6 +10,14 @@ module.exports.index = async (req, res) => {
       deleted: false,
     }
     const records = await ProductCategory.find(params);
+    for (const record of records) {
+      const idAccount = record.createdBy.account_id;
+      const user = await Account.findOne({ _id: idAccount, deleted: false });
+      if(user){
+        record.userName = user.fullName,
+        record.date = record.createdBy.createdAt
+      }
+    }
     const newRecords = createTreeHelper.createTree(records);
     res.render("admin/pages/products-category/index", {
       pageTitle: "Product-Category",
@@ -47,6 +56,9 @@ module.exports.createPost = async (req, res) => {
     }
     else {
       req.body.position = parseInt(req.body.position)
+    }
+    req.body.createdBy = {
+      account_id: res.locals.user.id
     }
     const record = new ProductCategory(req.body);
     await record.save();
@@ -92,7 +104,11 @@ module.exports.editPatch = async (req, res) => {
 module.exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
-    await ProductCategory.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() });
+    const infoDelete = {
+      account_id: res.locals.user.id,
+      deletedAt: new Date()
+    }
+    await ProductCategory.updateOne({ _id: id }, { deleted: true, deletedBy: infoDelete });
     res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/products-category`);
   } catch (error) {
     console.error(error);
@@ -112,6 +128,12 @@ module.exports.detail = async (req, res) => {
     let categoryParent = null;
     if(parentCategoryId){
       categoryParent = await ProductCategory.findOne({ _id: record.parent_id })
+    }
+    const idAccount = record.createdBy.account_id;
+    const user = await Account.findOne({ _id: idAccount, deleted: false });
+    if (user) {
+      record.userName = user.fullName;
+      record.date = record.createdBy.createdAt
     }
     res.render("admin/pages/products-category/detail", {
       pageTitle: "Chi tiết danh mục",

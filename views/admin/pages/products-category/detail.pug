@@ -28,6 +28,12 @@ block main
     if (record.thumbnail)
       div(class="mb-4")
         img(src=record.thumbnail style="width:100px")
+    
+    div(class="mb-4") Người tạo:
+      b #{record.userName || "Quản trị viên"}
+    div(class="mb-4") Thời gian tạo:
+      b #{record.date ? record.date.toLocaleString("vi-VN") : "--/--/----"}
+
     if(role.permissions.includes("products-category_edit"))
       a(
         href=`${prefixAdmin}/products-category/edit/${record.id}`

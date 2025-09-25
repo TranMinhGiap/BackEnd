@@ -48,6 +48,9 @@ mixin table-tree(items, level = 1)
             span(
               class="badge badge-danger"
             ) Dừng hoạt động
+      td 
+        b #{item.userName || "Quản trị viên"}
+        div #{item.date ? item.date.toLocaleDateString("vi-VN") : "--/--/----"}
       td
         if(role.permissions.includes("products-category_edit"))
           a(
