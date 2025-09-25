@@ -1,14 +1,19 @@
 extends ../../layouts/default.pug
 
 block main
-  if (record.title)
-    h1(class="mb-4") #{record.title}
+  if(role.permissions.includes("role_view"))
+    if (record.title)
+      h1(class="mb-4") #{record.title}
 
-  if (record.description)
-    div(class="mb-4") Chi tiết: 
-      b #{record.description}
-
-  a(
-    href=`${prefixAdmin}/roles/edit/${record.id}`
-    class="btn btn-outline-warning"
-  ) Chỉnh sửa
+    if (record.description)
+      div(class="mb-4") Chi tiết: 
+        b #{record.description}
+    if(role.permissions.includes("role_edit"))
+      a(
+        href=`${prefixAdmin}/roles/edit/${record.id}`
+        class="btn btn-outline-warning"
+      ) Chỉnh sửa
+  else
+    span(
+      class="badge badge-danger text-center"
+    ) Không có quyền truy cập! Liên hệ với admin để hỗ trợ.

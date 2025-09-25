@@ -1,4 +1,12 @@
 extends ../../layouts/default.pug
 
 block main
-  h1 Page Dashboard Admin
+  if(role.permissions.includes("dashboard_view"))
+    h1 Page Dashboard Admin
+    div #{user}
+    div #{role.title}
+    div #{role.permissions}
+  else
+    span(
+      class="badge badge-danger text-center"
+    ) Không có quyền truy cập! Liên hệ với admin để hỗ trợ.

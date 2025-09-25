@@ -1,35 +1,40 @@
 extends ../../layouts/default.pug
 
 block main
-  if (record.avatar)
-    div(class="mb-4") Ảnh đại diện
-      img(src=record.avatar style="width:100px")
+  if(role.permissions.includes("account_view"))
+    if (record.avatar)
+      div(class="mb-4") Ảnh đại diện
+        img(src=record.avatar style="width:100px")
 
-  if (record.fullName)
-    div(class="mb-4") Tên: 
-      b(class="mb-4") #{record.fullName}
+    if (record.fullName)
+      div(class="mb-4") Tên: 
+        b(class="mb-4") #{record.fullName}
 
-  if (record.email)
-    div(class="mb-4") Email: 
-      b #{record.email}
+    if (record.email)
+      div(class="mb-4") Email: 
+        b #{record.email}
 
-  if (record.phone)
-    div(class="mb-4") SDT: 
-      b #{record.phone}
+    if (record.phone)
+      div(class="mb-4") SDT: 
+        b #{record.phone}
 
-  if (record.role)
-    div(class="mb-4") Quyền: 
-      b #{record.role}
+    if (record.role)
+      div(class="mb-4") Quyền: 
+        b #{record.role}
 
-  if (record.status)
-    div(class="mb-4")
-      span Trang thái: 
-      if record.status == "active"
-        span.badge.badge-success Hoạt động
-      else
-        span.badge.badge-danger Không hoạt động
-
-  a(
-    href=`${prefixAdmin}/accounts/edit/${record.id}`
-    class="btn btn-outline-warning"
-  ) Chỉnh sửa
+    if (record.status)
+      div(class="mb-4")
+        span Trang thái: 
+        if record.status == "active"
+          span.badge.badge-success Hoạt động
+        else
+          span.badge.badge-danger Không hoạt động
+    if(role.permissions.includes("account_edit"))
+      a(
+        href=`${prefixAdmin}/accounts/edit/${record.id}`
+        class="btn btn-outline-warning"
+      ) Chỉnh sửa
+  else
+    span(
+      class="badge badge-danger text-center"
+    ) Không có quyền truy cập! Liên hệ với admin để hỗ trợ.
