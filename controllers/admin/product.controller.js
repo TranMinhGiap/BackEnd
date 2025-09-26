@@ -52,16 +52,24 @@ module.exports.index = async (req, res) => {
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
   // console.log(req.query);
-  // User tao
   for (const product of products) {
+    // User tao
     const idAccount = product.createdBy.account_id;
     const user = await Account.findOne({ _id: idAccount, deleted: false });
     if(user){
       product.userName = user.fullName;
       product.date = product.createdBy.createdAt
     }
+    // End User tao
+    // User cập nhật gần nhất
+    const updatedBy = product.updatedBy[product.updatedBy.length - 1];
+    if(updatedBy){
+      const idAccount = updatedBy.account_id;
+      const userUpdate = await Account.findOne({ _id: idAccount });
+      updatedBy.userName = userUpdate.fullName;
+    }
+    // End User cập nhật gần nhất
   }
-  // End User tao
   res.render("admin/pages/products/index", {
     pageTitle: "Products Admin",
     products: products,
@@ -74,7 +82,14 @@ module.exports.index = async (req, res) => {
 module.exports.changeStatus = async (req, res) => {
   const status = req.params.status;
   const id = req.params.id;
-  await Product.updateOne({ _id: id }, { status: status });
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  };
+  await Product.updateOne({ _id: id }, { 
+    status: status,
+    $push: { updatedBy: updatedBy } 
+  });
   // const redirectUrl = req.query.redirectUrl || "/admin/products";
   // res.redirect(redirectUrl);
   res.redirect(req.get("Referrer") || "/admin/products");
@@ -83,12 +98,22 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
   const type = req.body.type;
   const ids = req.body.ids.split(", ");
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  };
   switch (type) {
     case "active":
-      await Product.updateMany({ _id: { $in: ids} }, { status: "active" });
+      await Product.updateMany({ _id: { $in: ids} }, { 
+        status: "active",
+        $push: { updatedBy: updatedBy }
+      });
       break;
     case "inactive":
-      await Product.updateMany({ _id: { $in: ids} }, { status: "inactive" });
+      await Product.updateMany({ _id: { $in: ids} }, { 
+        status: "inactive",
+        $push: { updatedBy: updatedBy } 
+      });
       break;
     case "deleted-all":
       const infoDelete = {
@@ -106,7 +131,10 @@ module.exports.changeMulti = async (req, res) => {
         position = parseInt(position);
         // console.log(id)
         // console.log(position)
-        await Product.updateOne({ _id: id }, { position: position });
+        await Product.updateOne({ _id: id }, { 
+          position: position,
+          $push: { updatedBy: updatedBy }
+        });
         // Do giá trị update khác nhau nên buộc phải dùng for để update cho từng phần tử với các giá trị tưởng ứng
       }
       break;
@@ -194,15 +222,19 @@ module.exports.editPatch = async (req, res) => {
   const id = req.params.id;
 
   try {
-    // if (req.file) {
-    //   req.body.thumbnail = `/uploads/${req.file.filename}`
-    // }
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    };
     req.body.price = parseInt(req.body.price)
     req.body.discountPercentage = parseInt(req.body.discountPercentage)
     req.body.stock = parseInt(req.body.stock)
     req.body.position = parseInt(req.body.position)
 
-    await Product.updateOne({ _id: id }, req.body);
+    await Product.updateOne({ _id: id }, {
+      ...req.body,
+      $push: { updatedBy: updatedBy }
+    });
 
   } catch (error) {
 
@@ -224,6 +256,14 @@ module.exports.detail = async (req, res) => {
       product.userName = user.fullName;
       product.date = product.createdBy.createdAt
     }
+    // User cập nhật gần nhất
+    if(product.updatedBy.length > 0){
+      const updatedBy = product.updatedBy[product.updatedBy.length - 1];
+      const idAccount = updatedBy.account_id;
+      const userUpdate = await Account.findOne({ _id: idAccount });
+      updatedBy.userName = userUpdate.fullName;
+    }
+    // End User cập nhật gần nhất
 
     res.render("admin/pages/products/detail", {
       pageTitle: `${product.title}`,
