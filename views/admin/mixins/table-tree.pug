@@ -49,8 +49,15 @@ mixin table-tree(items, level = 1)
               class="badge badge-danger"
             ) Dừng hoạt động
       td 
-        b #{item.userName || "Quản trị viên"}
+        b(class="badge badge-info") #{item.userName || "Quản trị viên"}
         div #{item.date ? item.date.toLocaleDateString("vi-VN") : "--/--/----"}
+      td 
+        if item.updatedBy.length > 0
+          - const lastUserUpdate = item.updatedBy[item.updatedBy.length - 1];
+          b(class="badge badge-primary") #{lastUserUpdate.userName.fullName}
+          div #{lastUserUpdate.updatedAt.toLocaleDateString("vi-VN")}
+        else 
+          span(class="badge badge-warning") Chưa cập nhật
       td
         if(role.permissions.includes("products-category_edit"))
           a(

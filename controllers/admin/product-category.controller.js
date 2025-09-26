@@ -11,12 +11,23 @@ module.exports.index = async (req, res) => {
     }
     const records = await ProductCategory.find(params);
     for (const record of records) {
+      // User tao
       const idAccount = record.createdBy.account_id;
-      const user = await Account.findOne({ _id: idAccount, deleted: false });
+      const user = await Account.findOne({ _id: idAccount, deleted: false }).select("-password -token");
       if(user){
         record.userName = user.fullName,
         record.date = record.createdBy.createdAt
       }
+      // End User tao
+      // User cap nhat gan nhat
+      if(record.updatedBy.length > 0){
+        const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
+        const accountId = userLastUpdate.account_id;
+        const userName = await Account.findOne({ _id: accountId }).select("-password -token");
+        userLastUpdate.userName = userName;
+        // Nen tra ve day du thong tin cua tai khoan nho cho khac con dung
+      }
+      // End User cap nhat gan nhat
     }
     const newRecords = createTreeHelper.createTree(records);
     res.render("admin/pages/products-category/index", {
@@ -91,9 +102,16 @@ module.exports.edit = async (req, res) => {
 // [PATCH] admin/products-category/edit/:id
 module.exports.editPatch = async (req, res) => {
   try {
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date()
+    };
     const id = req.params.id;
     req.body.position = parseInt(req.body.position);
-    await ProductCategory.updateOne({ _id: id }, req.body);
+    await ProductCategory.updateOne({ _id: id }, {
+      ...req.body,
+      $push: { updatedBy: updatedBy }
+    });
     res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/products-category`);
   } catch (error) {
     console.error(error);
@@ -129,16 +147,27 @@ module.exports.detail = async (req, res) => {
     if(parentCategoryId){
       categoryParent = await ProductCategory.findOne({ _id: record.parent_id })
     }
+    // User tao
     const idAccount = record.createdBy.account_id;
-    const user = await Account.findOne({ _id: idAccount, deleted: false });
+    const user = await Account.findOne({ _id: idAccount, deleted: false }).select("-password -token");
     if (user) {
       record.userName = user.fullName;
       record.date = record.createdBy.createdAt
     }
+    // End User tao
+    // User cap nhat gan nhat
+    if(record.updatedBy.length > 0){
+      const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
+      const accountId = userLastUpdate.account_id;
+      const userName = await Account.findOne({ _id: accountId }).select("-password -token");
+      userLastUpdate.userName = userName;
+    }
+    // End User cap nhat gan nhat
     res.render("admin/pages/products-category/detail", {
       pageTitle: "Chi tiết danh mục",
       record: record,
       categoryParent: categoryParent
+      // Cach khac la them truc tiep 1 thuoc tinh vao doi tuong
     })
   } catch (error) {
     console.error(error);

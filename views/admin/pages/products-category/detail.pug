@@ -29,11 +29,19 @@ block main
       div(class="mb-4")
         img(src=record.thumbnail style="width:100px")
     
-    div(class="mb-4") Người tạo:
+    div(class="mb-4") Người tạo: 
       b #{record.userName || "Quản trị viên"}
-    div(class="mb-4") Thời gian tạo:
+    div(class="mb-4") Thời gian tạo: 
       b #{record.date ? record.date.toLocaleString("vi-VN") : "--/--/----"}
 
+    if record.updatedBy && record.updatedBy.length > 0
+      - const lastUserUpdate = record.updatedBy[record.updatedBy.length - 1];
+      div(class="mb-4") Người chỉnh sửa: 
+        b(class="badge badge-primary") #{lastUserUpdate.userName.fullName}
+      div(class="mb-4") Thời gian chỉnh sửa: 
+        b #{lastUserUpdate.updatedAt.toLocaleString("vi-VN")}
+    else 
+      span(class="badge badge-info mb-4") Chưa cập nhật
     if(role.permissions.includes("products-category_edit"))
       a(
         href=`${prefixAdmin}/products-category/edit/${record.id}`
