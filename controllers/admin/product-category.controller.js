@@ -40,6 +40,21 @@ module.exports.index = async (req, res) => {
   }
 }
 
+// [PATCH] admin/products-category/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const status = req.params.status;
+  const id = req.params.id;
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  };
+  await ProductCategory.updateOne({ _id: id }, { 
+    status: status,
+    $push: { updatedBy: updatedBy } 
+  });
+  res.redirect(req.get("Referrer") || "/admin/products-category");
+}
+
 // [GET] admin/products-category/create
 module.exports.create = async (req, res) => {
   try {

@@ -41,8 +41,16 @@ block main
       method="POST"
       id="form-delete-item"
       data-path=`${prefixAdmin}/products-category/delete`
+    )
+    //- Form chang status
+    form(
+      action=""
+      method="POST"
+      id="form-change-status"
+      data-path=`${prefixAdmin}/products-category/change-status`
     ) 
-    script(src="/Admin/js/product-category.js") 
+    script(src="/Admin/js/product-category.js")
+    script(src="/Admin/js/product.js")
   else
     span(
       class="badge badge-danger text-center"

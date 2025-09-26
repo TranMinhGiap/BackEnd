@@ -12,6 +12,7 @@ const validate = require("../../validates/admin/product-category.validate");
 
 router.get('/', controller.index)
 router.get('/create', controller.create)
+router.patch('/change-status/:status/:id', controller.changeStatus)
 router.post(
   '/create',
   upload.single('thumbnail'),

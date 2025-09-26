@@ -24,16 +24,14 @@ mixin table-tree(items, level = 1)
       td
         if(role.permissions.includes("products-category_edit"))
           if(item.status === "active")
-            a(
-              href="javascript:;"
+            button(
               button-change-status
               data-status="active"
               data-id=item.id
               class="badge badge-success"
             ) Hoạt động
           else 
-            a(
-              href="javascript:;"
+            button(
               button-change-status
               data-status="inactive"
               data-id=item.id
