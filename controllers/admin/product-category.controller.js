@@ -29,6 +29,17 @@ module.exports.index = async (req, res) => {
     }
     // End Filter status
 
+    // Sort
+    let sort = {};
+    if (req.query.sortKey && req.query.sortValue) {
+      sort[req.query.sortKey] = req.query.sortValue;
+      nomalDraw = true;
+    } else {
+      sort.position = "desc";
+      nomalDraw = true;
+    }
+    // End Sort
+
     // Pagination (Xu ly yeu cau client)
     const countCategory = await ProductCategory.countDocuments(params);
     let objectPagination = paginationHelper({
@@ -43,6 +54,7 @@ module.exports.index = async (req, res) => {
 
     // =================================================
     const records = await ProductCategory.find(params)
+      .sort(sort)
       .limit(objectPagination.limitItems)
       .skip(objectPagination.skip);
     for (const record of records) {
