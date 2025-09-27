@@ -4,6 +4,7 @@ const Account = require("../../models/account.modal");
 const createTreeHelper = require("../../helpers/createTree");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
+const filterStatusHelper = require("../../helpers/filterStatus");
 
 // [GET] admin/products-category
 module.exports.index = async (req, res) => {
@@ -19,6 +20,14 @@ module.exports.index = async (req, res) => {
       nomalDraw = true;
     }
     // End Search
+    
+    // Filter status
+    const filterStatus = filterStatusHelper(req.query);
+    if (req.query.status) {
+      params.status = req.query.status;
+      nomalDraw = true;
+    }
+    // End Filter status
 
     // Pagination (Xu ly yeu cau client)
     const countCategory = await ProductCategory.countDocuments(params);
@@ -64,7 +73,8 @@ module.exports.index = async (req, res) => {
         check: nomalDraw,
         records: records
       },
-      pagination: objectPagination
+      pagination: objectPagination,
+      filterStatus: filterStatus,
     })
   } catch (error) {
     console.error(error);
