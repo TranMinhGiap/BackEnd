@@ -1,6 +1,7 @@
 const Account = require("../../models/account.modal");
 const Role = require("../../models/role.modal")
 const systemConfig = require("../../config/system");
+const filterStatusHelper = require("../../helpers/filterStatus");
 
 // MD5
 const md5 = require('md5');
@@ -8,27 +9,30 @@ const md5 = require('md5');
 
 // [GET] /admin/accounts
 module.exports.index = async (req, res) => {
-  let params = {
-    deleted: false
+  try {
+    let params = {
+      deleted: false
+    }
+    // Fillter Status
+    const filterStatus = filterStatusHelper(req.query);
+    if (req.query.status) {
+      params.status = req.query.status;
+    }
+    // End Fillter Status
+    const records = await Account.find(params).select("-password -token");
+    for (const record of records) {
+      const role = await Role.findOne({ _id: record.role_id, deleted: false })
+      record.role = role.title;
+    }
+    res.render("admin/pages/account/index", {
+      pageTitle: "Tài khoản",
+      records: records,
+      filterStatus: filterStatus
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xem tài khoản");
   }
-  const records = await Account.find(params).select("-password -token");
-  for (const record of records){
-    const role = await Role.findOne({ _id: record.role_id, deleted: false })
-    record.role = role.title;
-  }
-  // Cách khác
-  // let role = {};
-  // for (const acc of records){
-  //   const idRole = acc.role_id;
-  //   const roleItem = await Role.findOne({ _id: idRole, deleted: false });
-  //   role[idRole] = roleItem.title;
-  // }
-  // forEach không được thiết kế để xử lý các tác vụ đồng bộ
-  res.render("admin/pages/account/index", {
-    pageTitle: "Tài khoản",
-    records: records
-    // role: role
-  })
 }
 
 // [GET] /admin/accounts/create

@@ -1,8 +1,16 @@
 extends ../../layouts/default.pug
+include ../../mixins/filter-status.pug
 
 block main
   if(role.permissions.includes("account_view"))
     h1(class="mb-4") Danh sách tài khoản
+
+    .card.mb-3
+      .card-header Bộ lọc và Tìm kiếm
+      .card-body
+        .row
+          .col-6
+            +filter-status(filterStatus)
 
     .card.mb-3
       .card-header Danh sách
@@ -82,6 +90,7 @@ block main
     )
 
     script(src="/Admin/js/product-category.js")
+    //- script(src="/Admin/js/script.js")
   else
     span(
       class="badge badge-danger text-center"
