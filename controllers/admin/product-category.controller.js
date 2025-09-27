@@ -2,6 +2,7 @@ const systemConfig = require("../../config/system");
 const ProductCategory = require("../../models/product-category.modal");
 const Account = require("../../models/account.modal");
 const createTreeHelper = require("../../helpers/createTree");
+const searchHelper = require("../../helpers/search");
 
 // [GET] admin/products-category
 module.exports.index = async (req, res) => {
@@ -9,6 +10,16 @@ module.exports.index = async (req, res) => {
     let params = {
       deleted: false,
     }
+    let checkSearch = false;
+     // Search
+    const objectSearch = searchHelper(req.query);
+    if (objectSearch.regex) {
+      params.title = objectSearch.regex;
+      checkSearch = true;
+    }
+    // End Search
+
+    // =================================================
     const records = await ProductCategory.find(params);
     for (const record of records) {
       // User tao
@@ -32,7 +43,12 @@ module.exports.index = async (req, res) => {
     const newRecords = createTreeHelper.createTree(records);
     res.render("admin/pages/products-category/index", {
       pageTitle: "Product-Category",
-      records: newRecords
+      records: newRecords,
+      keyword: objectSearch.keyword,
+      resultSearch: {
+        search: checkSearch,
+        records: records
+      }
     })
   } catch (error) {
     console.error(error);
