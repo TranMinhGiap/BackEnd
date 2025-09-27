@@ -101,6 +101,12 @@ block main
       id="form-delete-item"
       data-path=`${prefixAdmin}/accounts/delete`
     )
+    form(
+      action=""
+      method="POST"
+      id="form-change-status"
+      data-path=`${prefixAdmin}/accounts/change-status`
+    ) 
 
     script(src="/Admin/js/product-category.js")
   else

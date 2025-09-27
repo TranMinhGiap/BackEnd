@@ -151,6 +151,21 @@ module.exports.editPatch = async (req, res) => {
 }
 // Có thể thông báo nhưng lỗi thư viện hay sao ý nên chưa làm :))
 
+// [PATCH] admin/accounts/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const status = req.params.status;
+  const id = req.params.id;
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  };
+  await Account.updateOne({ _id: id }, { 
+    status: status,
+    $push: { updatedBy: updatedBy } 
+  });
+  res.redirect(req.get("Referrer") || "/admin/products");
+}
+
 // [GET] /admin/accounts/detail/:id
 module.exports.detail = async (req, res) => {
   try {
