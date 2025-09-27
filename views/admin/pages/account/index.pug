@@ -3,6 +3,7 @@ include ../../mixins/filter-status.pug
 include ../../mixins/search.pug
 include ../../mixins/pagination.pug
 include ../../mixins/sort-account.pug
+include ../../mixins/form-change-multi-account.pug
 
 block main
   if(role.permissions.includes("account_view"))
@@ -22,6 +23,8 @@ block main
       .card-body
         .row
           .col-8
+            if(role.permissions.includes("account_edit"))
+              +form-change-multi-account(`${prefixAdmin}/accounts/change-multi?_method=PATCH`)
           .col-4.text-right
             if(role.permissions.includes("account_create"))
               a(

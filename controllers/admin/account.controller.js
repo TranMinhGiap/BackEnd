@@ -166,6 +166,43 @@ module.exports.changeStatus = async (req, res) => {
   res.redirect(req.get("Referrer") || "/admin/products");
 }
 
+// [PATCH] admin/products/changeMulti
+module.exports.changeMulti = async (req, res) => {
+  const type = req.body.type;
+  const ids = req.body.ids.split(", ");
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  };
+  switch (type) {
+    case "active":
+      await Account.updateMany({ _id: { $in: ids} }, { 
+        status: "active",
+        $push: { updatedBy: updatedBy }
+      });
+      break;
+    case "inactive":
+      await Account.updateMany({ _id: { $in: ids} }, { 
+        status: "inactive",
+        $push: { updatedBy: updatedBy } 
+      });
+      break;
+    case "deleted-all":
+      const infoDelete = {
+        account_id: res.locals.user.id,
+        deletedAt: new Date()
+      }
+      await Account.updateMany({ _id: { $in: ids} }, { 
+        deleted: true,
+        deletedBy: infoDelete
+      });
+      break;
+    default:
+      break;
+  }
+  res.redirect(req.get("Referrer") || "/admin/accounts");
+}
+
 // [GET] /admin/accounts/detail/:id
 module.exports.detail = async (req, res) => {
   try {

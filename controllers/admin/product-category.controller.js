@@ -156,7 +156,7 @@ module.exports.changeMulti = async (req, res) => {
     default:
       break;
   }
-  res.redirect(req.get("Referrer") || "/admin/products");
+  res.redirect(req.get("Referrer") || "/admin/products-category");
 }
 
 // [GET] admin/products-category/create
