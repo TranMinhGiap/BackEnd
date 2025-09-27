@@ -109,6 +109,56 @@ module.exports.changeStatus = async (req, res) => {
   res.redirect(req.get("Referrer") || "/admin/products-category");
 }
 
+// [PATCH] admin/products/changeMulti
+module.exports.changeMulti = async (req, res) => {
+  const type = req.body.type;
+  const ids = req.body.ids.split(", ");
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  };
+  switch (type) {
+    case "active":
+      await ProductCategory.updateMany({ _id: { $in: ids} }, { 
+        status: "active",
+        $push: { updatedBy: updatedBy }
+      });
+      break;
+    case "inactive":
+      await ProductCategory.updateMany({ _id: { $in: ids} }, { 
+        status: "inactive",
+        $push: { updatedBy: updatedBy } 
+      });
+      break;
+    case "deleted-all":
+      const infoDelete = {
+        account_id: res.locals.user.id,
+        deletedAt: new Date()
+      }
+      await ProductCategory.updateMany({ _id: { $in: ids} }, { 
+        deleted: true,
+        deletedBy: infoDelete
+      });
+      break;
+    case "change-position":
+      for (const item of ids) {
+        let [id, position] = item.split("-");
+        position = parseInt(position);
+        // console.log(id)
+        // console.log(position)
+        await ProductCategory.updateOne({ _id: id }, { 
+          position: position,
+          $push: { updatedBy: updatedBy }
+        });
+        // Do giá trị update khác nhau nên buộc phải dùng for để update cho từng phần tử với các giá trị tưởng ứng
+      }
+      break;
+    default:
+      break;
+  }
+  res.redirect(req.get("Referrer") || "/admin/products");
+}
+
 // [GET] admin/products-category/create
 module.exports.create = async (req, res) => {
   try {
