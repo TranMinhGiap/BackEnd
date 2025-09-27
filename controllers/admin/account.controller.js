@@ -27,6 +27,14 @@ module.exports.index = async (req, res) => {
       params.fullName = objectSearch.regex;
     }
     // End Search
+    // Sort
+    let sort = {};
+    if (req.query.sortKey && req.query.sortValue) {
+      sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+      sort.createdAt = "desc";
+    }
+    // End Sort
     //Pagination
     const coutnProduct = await Account.countDocuments(params);
     let objectPagination = paginationHelper({
@@ -36,6 +44,7 @@ module.exports.index = async (req, res) => {
     }, req.query, coutnProduct);
     //End Pagination
     const records = await Account.find(params)
+      .sort(sort)
       .limit(objectPagination.limitItems)
       .skip(objectPagination.skip)
       .select("-password -token");
