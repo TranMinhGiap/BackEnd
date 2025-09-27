@@ -2,6 +2,7 @@ const Account = require("../../models/account.modal");
 const Role = require("../../models/role.modal")
 const systemConfig = require("../../config/system");
 const filterStatusHelper = require("../../helpers/filterStatus");
+const searchHelper = require("../../helpers/search");
 
 // MD5
 const md5 = require('md5');
@@ -19,6 +20,12 @@ module.exports.index = async (req, res) => {
       params.status = req.query.status;
     }
     // End Fillter Status
+    // Search
+    const objectSearch = searchHelper(req.query);
+    if (objectSearch.regex) {
+      params.fullName = objectSearch.regex;
+    }
+    // End Search
     const records = await Account.find(params).select("-password -token");
     for (const record of records) {
       const role = await Role.findOne({ _id: record.role_id, deleted: false })
@@ -27,6 +34,7 @@ module.exports.index = async (req, res) => {
     res.render("admin/pages/account/index", {
       pageTitle: "Tài khoản",
       records: records,
+      keyword: objectSearch.keyword,
       filterStatus: filterStatus
     })
   } catch (error) {

@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/filter-status.pug
+include ../../mixins/search.pug
 
 block main
   if(role.permissions.includes("account_view"))
@@ -11,6 +12,8 @@ block main
         .row
           .col-6
             +filter-status(filterStatus)
+          .col-6 
+            +search(keyword)
 
     .card.mb-3
       .card-header Danh sách
@@ -90,7 +93,6 @@ block main
     )
 
     script(src="/Admin/js/product-category.js")
-    //- script(src="/Admin/js/script.js")
   else
     span(
       class="badge badge-danger text-center"
