@@ -63,21 +63,31 @@ block main
                 td #{item.role || 'Không xác định'}
                 //- td #{role[item.role_id] || 'Không xác định'}
                 td #{item.email}
-                td 
-                  if(item.status === "active")
-                    button(
-                      button-change-status
-                      data-status="active"
-                      data-id=item.id
-                      class="badge badge-success"
-                    ) Hoạt động
+                td
+                  if(role.permissions.includes("account_edit"))
+                    if(item.status === "active")
+                      button(
+                        button-change-status
+                        data-status="active"
+                        data-id=item.id
+                        class="badge badge-success"
+                      ) Hoạt động
+                    else 
+                      button(
+                        button-change-status
+                        data-status="inactive"
+                        data-id=item.id
+                        class="badge badge-danger"
+                      ) Dừng hoạt động
                   else 
-                    button(
-                      button-change-status
-                      data-status="inactive"
-                      data-id=item.id
-                      class="badge badge-danger"
-                    ) Dừng hoạt động
+                    if(item.status === "active")
+                      button(
+                        class="badge badge-success"
+                      ) Hoạt động
+                    else 
+                      button(
+                        class="badge badge-danger"
+                      ) Dừng hoạt động
                 td
                   if(role.permissions.includes("account_edit"))
                     a(
