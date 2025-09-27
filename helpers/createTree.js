@@ -22,3 +22,18 @@ module.exports.createTree = (arr, parentId = "") => {
   const tree = createTree(arr, parentId = "");
   return tree;
 }
+
+// module.exports.flattenTree = (tree, level = 0, prefix = "") => {
+//   let result = [];
+//   tree.forEach(item => {
+//     result.push({
+//       ...item,
+//       prefix: "-- ".repeat(level)  // để hiển thị
+//     });
+//     if (item.children) {
+//       result = result.concat(flattenTree(item.children, level + 1));
+//     }
+//   });
+//   return result;
+// }
+// Chuyen thanh mang nhu nay thi khi duoi pug se do phai xu ly logic hon chi can duyet qua moi phan tu roi td #{item.prefix} #{item.title}

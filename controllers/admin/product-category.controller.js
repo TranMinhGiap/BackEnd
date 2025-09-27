@@ -3,6 +3,7 @@ const ProductCategory = require("../../models/product-category.modal");
 const Account = require("../../models/account.modal");
 const createTreeHelper = require("../../helpers/createTree");
 const searchHelper = require("../../helpers/search");
+const paginationHelper = require("../../helpers/pagination");
 
 // [GET] admin/products-category
 module.exports.index = async (req, res) => {
@@ -10,17 +11,31 @@ module.exports.index = async (req, res) => {
     let params = {
       deleted: false,
     }
-    let checkSearch = false;
+    let nomalDraw = false;
      // Search
     const objectSearch = searchHelper(req.query);
     if (objectSearch.regex) {
       params.title = objectSearch.regex;
-      checkSearch = true;
+      nomalDraw = true;
     }
     // End Search
 
+    // Pagination (Xu ly yeu cau client)
+    const countCategory = await ProductCategory.countDocuments(params);
+    let objectPagination = paginationHelper({
+      currentPage: 1,
+      limitItems: 5,
+      skip: 0
+    }, req.query, countCategory);
+    if(req.query.page){
+      nomalDraw = true;
+    }
+    // End Pagination
+
     // =================================================
-    const records = await ProductCategory.find(params);
+    const records = await ProductCategory.find(params)
+      .limit(objectPagination.limitItems)
+      .skip(objectPagination.skip);
     for (const record of records) {
       // User tao
       const idAccount = record.createdBy.account_id;
@@ -45,10 +60,11 @@ module.exports.index = async (req, res) => {
       pageTitle: "Product-Category",
       records: newRecords,
       keyword: objectSearch.keyword,
-      resultSearch: {
-        search: checkSearch,
+      nomalDraw: {
+        check: nomalDraw,
         records: records
-      }
+      },
+      pagination: objectPagination
     })
   } catch (error) {
     console.error(error);
