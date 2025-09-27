@@ -3,6 +3,7 @@ const Role = require("../../models/role.modal")
 const systemConfig = require("../../config/system");
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
+const paginationHelper = require("../../helpers/pagination");
 
 // MD5
 const md5 = require('md5');
@@ -26,7 +27,18 @@ module.exports.index = async (req, res) => {
       params.fullName = objectSearch.regex;
     }
     // End Search
-    const records = await Account.find(params).select("-password -token");
+    //Pagination
+    const coutnProduct = await Account.countDocuments(params);
+    let objectPagination = paginationHelper({
+      currentPage: 1,
+      limitItems: 5,
+      skip: 0
+    }, req.query, coutnProduct);
+    //End Pagination
+    const records = await Account.find(params)
+      .limit(objectPagination.limitItems)
+      .skip(objectPagination.skip)
+      .select("-password -token");
     for (const record of records) {
       const role = await Role.findOne({ _id: record.role_id, deleted: false })
       record.role = role.title;
@@ -35,6 +47,7 @@ module.exports.index = async (req, res) => {
       pageTitle: "Tài khoản",
       records: records,
       keyword: objectSearch.keyword,
+      pagination: objectPagination,
       filterStatus: filterStatus
     })
   } catch (error) {

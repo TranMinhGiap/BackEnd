@@ -1,6 +1,7 @@
 extends ../../layouts/default.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/search.pug
+include ../../mixins/pagination.pug
 
 block main
   if(role.permissions.includes("account_view"))
@@ -85,6 +86,7 @@ block main
                     href=`${prefixAdmin}/accounts/detail/${item.id}`
                     class="btn btn-secondary btn-sm ml-1"
                   ) Chi tiết
+    +pagination(pagination)
     form(
       action=""
       method="POST"
