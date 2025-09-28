@@ -4,7 +4,8 @@ block main
   if(role.permissions.includes("account_view"))
     if (record.avatar)
       div(class="mb-4") Ảnh đại diện
-        img(src=record.avatar style="width:100px")
+        div
+          img(src=record.avatar style="width:100px")
 
     if (record.fullName)
       div(class="mb-4") Tên: 
@@ -29,6 +30,23 @@ block main
           span.badge.badge-success Hoạt động
         else
           span.badge.badge-danger Không hoạt động
+    div(class="mb-4") Người tạo: 
+      b #{record.userName || "Quản trị viên"}
+      //- Trường hợp || "Quản trị viên" dành cho những account tạo bằng tay trước đây nên không có trường createBy
+    div(class="mb-4") Thời gian tạo: 
+      b #{record.date ? record.date.toLocaleString("vi-VN") : "--/--/----"}
+    div(class="mb-4") Người xóa: 
+      b #{record.userNameDelete || "Chưa bị xóa !"}
+    div(class="mb-4") Thời gian xóa: 
+      b #{record.dateDelete ? record.date.toLocaleString("vi-VN") : "--/--/----"}
+    if record.updatedBy && record.updatedBy.length > 0
+      - const lastUserUpdate = record.updatedBy[record.updatedBy.length - 1];
+      div(class="mb-4") Người chỉnh sửa: 
+        b(class="badge badge-primary") #{lastUserUpdate.userName}
+      div(class="mb-4") Thời gian chỉnh sửa: 
+        b #{lastUserUpdate.updatedAt.toLocaleString("vi-VN")}
+    else 
+      span(class="badge badge-info mb-4") Chưa được cập nhật !
     if(role.permissions.includes("account_edit"))
       a(
         href=`${prefixAdmin}/accounts/edit/${record.id}`

@@ -51,6 +51,23 @@ module.exports.index = async (req, res) => {
     for (const record of records) {
       const role = await Role.findOne({ _id: record.role_id, deleted: false })
       record.role = role.title;
+      // User create
+      const idAccount = record.createdBy.account_id;
+      const user = await Account.findOne({ _id: idAccount }).select("-password -token");
+      if(user){
+        record.userName = user.fullName;
+        record.date = record.createdBy.createdAt;
+      }
+      // End User create
+      // User last update
+      if (record.updatedBy.length > 0) {
+        const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
+        const accountId = userLastUpdate.account_id;
+        const userNameUpdate = await Account.findOne({ _id: accountId }).select("fullName");
+        userLastUpdate.userName = userNameUpdate.fullName;
+        // Nen tra ve day du thong tin cua tai khoan nho cho khac con dung nhưng đôi khi không cần trả đủ
+      }
+      // End User last update
     }
     res.render("admin/pages/account/index", {
       pageTitle: "Tài khoản",
@@ -92,6 +109,9 @@ module.exports.createPost = async (req, res) => {
       return res.status(400).send("Email đã tồn tại");
     }else{
       req.body.password = md5(req.body.password);
+      req.body.createdBy = {
+        account_id: res.locals.user.id
+      }
       const record = new Account(req.body);
       await record.save();
       res.redirect(`${systemConfig.prefixAdmin}/accounts`);
@@ -141,7 +161,14 @@ module.exports.editPatch = async (req, res) => {
       } else {
         delete req.body.password;
       }
-      await Account.updateOne({ _id: idAccount }, req.body);
+      const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+      };
+      await Account.updateOne({ _id: idAccount }, {
+        ... req.body,
+        $push: { updatedBy: updatedBy }
+      });
       res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/accounts`);
     }
   } catch (error) {
@@ -163,10 +190,10 @@ module.exports.changeStatus = async (req, res) => {
     status: status,
     $push: { updatedBy: updatedBy } 
   });
-  res.redirect(req.get("Referrer") || "/admin/products");
+  res.redirect(req.get("Referrer") || "/admin/accounts");
 }
 
-// [PATCH] admin/products/changeMulti
+// [PATCH] admin/accounts/changeMulti
 module.exports.changeMulti = async (req, res) => {
   const type = req.body.type;
   const ids = req.body.ids.split(", ");
@@ -214,6 +241,31 @@ module.exports.detail = async (req, res) => {
     const record = await Account.findOne(params).select("-password -token");
     const role = await Role.findOne({ _id: record.role_id, deleted: false });
     record.role = role.title;
+    // User create
+    const idUserCreate = record.createdBy.account_id;
+    const user = await Account.findOne({ _id: idUserCreate }).select("-password -token");
+    if (user) {
+      record.userName = user.fullName;
+      record.date = record.createdBy.createdAt;
+    }
+    // End User create
+    // User delete
+    const idUserDelete = record.deletedBy.account_id;
+    const userDelete = await Account.findOne({ _id: idUserDelete, deleted: false }).select("-password -token");
+    if (userDelete) {
+      record.userNameDelete = userDelete ? userDelete.fullName : "Tài khoản đã bị xóa hoặc không tồn tại";
+      record.dateDelete = record.deletedBy.deletedAt;
+    }
+    // End User delete
+    // User last update
+    if (record.updatedBy.length > 0) {
+      const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
+      const accountId = userLastUpdate.account_id;
+      const userNameUpdate = await Account.findOne({ _id: accountId, deleted: false }).select("fullName");
+      userLastUpdate.userName = userNameUpdate ? userNameUpdate.fullName : "Tài khoản đã bị xóa hoặc không tồn tại";
+      // Nen tra ve day du thong tin cua tai khoan nho cho khac con dung nhưng đôi khi không cần trả đủ
+    }
+    // End User last delete
     res.render("admin/pages/account/detail", {
       pageTitle: "Tài khoản",
       record: record
@@ -228,7 +280,11 @@ module.exports.detail = async (req, res) => {
 module.exports.delete = async (req, res) => {
   try {
     const idAccount = req.params.id;
-    await Account.updateOne({ _id: idAccount }, { deleted: true, deletedAt: new Date() });
+    const infoDelete = {
+      account_id: res.locals.user.id,
+      deletedAt: new Date()
+    }
+    await Account.updateOne({ _id: idAccount }, { deleted: true, deletedBy: infoDelete });
     res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/accounts`);
   } catch (error) {
     console.error(error);
