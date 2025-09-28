@@ -34,14 +34,10 @@ block main
     div(class="mb-4") Thời gian tạo: 
       b #{product.date ? product.date.toLocaleString("vi-VN") : "--/--/----"}
     td 
-      if product.updatedBy && product.updatedBy.length > 0
-        - const lastUserUpdate = product.updatedBy[product.updatedBy.length - 1];
-        div(class="mb-4") Người chỉnh sửa: 
-          b(class="badge badge-primary") #{lastUserUpdate.userName}
-        div(class="mb-4") Thời gian chỉnh sửa: 
-          b #{lastUserUpdate.updatedAt.toLocaleString("vi-VN")}
-      else 
-        span(class="badge badge-info mb-4") Chưa cập nhật
+      div(class="mb-4") Người chỉnh sửa: 
+        b(class="badge badge-primary") #{product.lastUpdateUserName}
+      div(class="mb-4") Thời gian chỉnh sửa: 
+        b #{product.lastUpdateDate ? product.lastUpdateDate.toLocaleDateString("vi-VN") : "--/--/----"}
     if (product.position)
       div(class="mb-4") Vị trí: 
         b #{product.position}

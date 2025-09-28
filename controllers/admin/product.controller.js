@@ -1,6 +1,7 @@
 const Product = require("../../models/product.modal");
 const Account = require("../../models/account.modal");
 const filterStatusHelper = require("../../helpers/filterStatus");
+const attachUserLogsHelper = require("../../helpers/attachUserLog");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
 const ProductCategory = require("../../models/product-category.modal");
@@ -52,23 +53,8 @@ module.exports.index = async (req, res) => {
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
   // console.log(req.query);
-  for (const product of products) {
-    // User tao
-    const idAccount = product.createdBy.account_id;
-    const user = await Account.findOne({ _id: idAccount, deleted: false });
-    if(user){
-      product.userName = user.fullName;
-      product.date = product.createdBy.createdAt
-    }
-    // End User tao
-    // User cập nhật gần nhất
-    const updatedBy = product.updatedBy[product.updatedBy.length - 1];
-    if(updatedBy){
-      const idAccount = updatedBy.account_id;
-      const userUpdate = await Account.findOne({ _id: idAccount });
-      updatedBy.userName = userUpdate.fullName;
-    }
-    // End User cập nhật gần nhất
+  for (let product of products) {
+    product = await attachUserLogsHelper(product)
   }
   res.render("admin/pages/products/index", {
     pageTitle: "Products Admin",
@@ -249,20 +235,8 @@ module.exports.detail = async (req, res) => {
       _id: req.params.id
     };
 
-    const product = await Product.findOne(find);
-    const idAccount = product.createdBy.account_id;
-    const user = await Account.findOne({ _id: idAccount, deleted: false });
-    if(user){
-      product.userName = user.fullName;
-      product.date = product.createdBy.createdAt
-    }
-    // User cập nhật gần nhất
-    if(product.updatedBy.length > 0){
-      const updatedBy = product.updatedBy[product.updatedBy.length - 1];
-      const idAccount = updatedBy.account_id;
-      const userUpdate = await Account.findOne({ _id: idAccount });
-      updatedBy.userName = userUpdate.fullName;
-    }
+    let product = await Product.findOne(find);
+    product = await attachUserLogsHelper(product)
     // End User cập nhật gần nhất
 
     res.render("admin/pages/products/detail", {
@@ -271,6 +245,7 @@ module.exports.detail = async (req, res) => {
     })
   } catch (error) {
     // Co the hien thi them thong bao nhung dang loi thu vien nhu da de cap truoc do nen tam thoi bo qua thong bao
-    res.redirect(`${systemConfig.prefixAdmin}/products`);
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xem tài khoản");
   }
 }
