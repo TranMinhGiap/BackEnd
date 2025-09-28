@@ -2,6 +2,7 @@ const Role = require("../../models/role.modal");
 const Account = require("../../models/account.modal");
 const systemConfig = require("../../config/system");
 const searchHelper = require("../../helpers/search");
+const attachUserLogsHelper = require("../../helpers/attachUserLog");
 const paginationHelper = require("../../helpers/pagination");
 
 // [GET] /admin/roles
@@ -36,24 +37,8 @@ module.exports.index = async (req, res) => {
       .sort(sort)
       .limit(objectPagination.limitItems)
       .skip(objectPagination.skip);
-    for (const record of records) {
-      // User create
-      const idAccount = record.createdBy.account_id;
-      const user = await Account.findOne({ _id: idAccount }).select("-password -token");
-      if(user){
-        record.userName = user.fullName;
-        record.date = record.createdBy.createdAt;
-      }
-      // End User create
-      // User last update
-      if (record.updatedBy.length > 0) {
-        const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
-        const accountId = userLastUpdate.account_id;
-        const userNameUpdate = await Account.findOne({ _id: accountId, deleted: false }).select("fullName");
-        userLastUpdate.userName = userNameUpdate ? userNameUpdate.fullName : "Tài khoản đã bị xóa hoặc không tồn tại";
-        // Nen tra ve day du thong tin cua tai khoan nho cho khac con dung nhưng đôi khi không cần trả đủ
-      }
-      // End User last update
+    for (let record of records) {
+      record = await attachUserLogsHelper(record)
     }
     res.render("admin/pages/roles/index", {
       pageTitle: "Nhóm phân quyền",
@@ -154,27 +139,8 @@ module.exports.detail = async (req, res) => {
       deleted: false,
       _id: idRole
     }
-    const record = await Role.findOne(params);
-    // User create
-    const idUserCreate = record.createdBy.account_id;
-    const user = await Account.findOne({ _id: idUserCreate, deleted: false }).select("fullName");
-    record.userName = user ? user.fullName : "Tài khoản đã bị xóa hoặc không tồn tại";
-    record.date = record.createdBy.createdAt;
-    // End User create
-    // User delete
-    const idUserDelete = record.deletedBy.account_id;
-    const userDelete = await Account.findOne({ _id: idUserDelete, deleted: false }).select("fullName");
-    record.userNameDelete = userDelete ? userDelete.fullName : "Tài khoản đã bị xóa hoặc không tồn tại";
-    record.dateDelete = record.deletedBy.deletedAt;
-    // End User delete
-    // User last update
-    if (record.updatedBy.length > 0) {
-      const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
-      const accountId = userLastUpdate.account_id;
-      const userNameUpdate = await Account.findOne({ _id: accountId, deleted: false }).select("fullName");
-      userLastUpdate.userName = userNameUpdate ? userNameUpdate.fullName : "Tài khoản đã bị xóa hoặc không tồn tại";
-    }
-    // End User last delete
+    let record = await Role.findOne(params);
+    record = await attachUserLogsHelper(record);
     res.render("admin/pages/roles/detail", {
       pageTitle: "Chi tiết nhóm quyền",
       record: record

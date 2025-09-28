@@ -58,15 +58,11 @@ block main
                   td #{item.title}
                   td #{item.description}
                   td 
-                    b(class="badge badge-info") #{item.userName || "Quản trị viên"}
+                    b(class="badge badge-info") #{item.userName}
                     div #{item.date ? item.date.toLocaleDateString("vi-VN") : "--/--/----"}
                   td 
-                    if item.updatedBy.length > 0
-                      - const lastUserUpdate = item.updatedBy[item.updatedBy.length - 1];
-                      b(class="badge badge-primary") #{lastUserUpdate.userName}
-                      div #{lastUserUpdate.updatedAt.toLocaleDateString("vi-VN")}
-                    else 
-                      span(class="badge badge-warning") Chưa chỉnh sửa !
+                    b(class="badge badge-primary") #{item.lastUpdateUserName}
+                    div #{item.lastUpdateDate ? item.lastUpdateDate.toLocaleDateString("vi-VN") : "--/--/----"}
                   td
                     a(
                       class = "btn btn-secondary btn-sm"
