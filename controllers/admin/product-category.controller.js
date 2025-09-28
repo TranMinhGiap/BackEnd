@@ -2,6 +2,7 @@ const systemConfig = require("../../config/system");
 const ProductCategory = require("../../models/product-category.modal");
 const Account = require("../../models/account.modal");
 const createTreeHelper = require("../../helpers/createTree");
+const attachUserLogsHelper = require("../../helpers/attachUserLog");
 const searchHelper = require("../../helpers/search");
 const paginationHelper = require("../../helpers/pagination");
 const filterStatusHelper = require("../../helpers/filterStatus");
@@ -57,24 +58,8 @@ module.exports.index = async (req, res) => {
       .sort(sort)
       .limit(objectPagination.limitItems)
       .skip(objectPagination.skip);
-    for (const record of records) {
-      // User tao
-      const idAccount = record.createdBy.account_id;
-      const user = await Account.findOne({ _id: idAccount, deleted: false }).select("-password -token");
-      if(user){
-        record.userName = user.fullName,
-        record.date = record.createdBy.createdAt
-      }
-      // End User tao
-      // User cap nhat gan nhat
-      if(record.updatedBy.length > 0){
-        const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
-        const accountId = userLastUpdate.account_id;
-        const userName = await Account.findOne({ _id: accountId }).select("-password -token");
-        userLastUpdate.userName = userName;
-        // Nen tra ve day du thong tin cua tai khoan nho cho khac con dung
-      }
-      // End User cap nhat gan nhat
+    for (let record of records) {
+      record = await attachUserLogsHelper(record);
     }
     const newRecords = createTreeHelper.createTree(records);
     res.render("admin/pages/products-category/index", {
@@ -260,28 +245,31 @@ module.exports.detail = async (req, res) => {
       deleted: false,
       _id: id
     }
-    const record = await ProductCategory.findOne(params);
+    let record = await ProductCategory.findOne(params);
     const parentCategoryId = record.parent_id;
     let categoryParent = null;
     if(parentCategoryId){
       categoryParent = await ProductCategory.findOne({ _id: record.parent_id })
     }
-    // User tao
-    const idAccount = record.createdBy.account_id;
-    const user = await Account.findOne({ _id: idAccount, deleted: false }).select("-password -token");
-    if (user) {
-      record.userName = user.fullName;
-      record.date = record.createdBy.createdAt
-    }
-    // End User tao
-    // User cap nhat gan nhat
-    if(record.updatedBy.length > 0){
-      const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
-      const accountId = userLastUpdate.account_id;
-      const userName = await Account.findOne({ _id: accountId }).select("-password -token");
-      userLastUpdate.userName = userName;
-    }
-    // End User cap nhat gan nhat
+    record = await attachUserLogsHelper(record);
+    // // User tao
+    // const idAccount = record.createdBy.account_id;
+    // const user = await Account.findOne({ _id: idAccount, deleted: false }).select("-password -token");
+    // if (user) {
+    //   record.userName = user.fullName;
+    //   record.date = record.createdBy.createdAt
+    // }
+    // // End User tao
+    // // User cap nhat gan nhat
+    // if(record.updatedBy.length > 0){
+    //   const userLastUpdate = record.updatedBy[record.updatedBy.length - 1];
+    //   const accountId = userLastUpdate.account_id;
+    //   const userName = await Account.findOne({ _id: accountId }).select("-password -token");
+    //   userLastUpdate.userName = userName;
+    // }
+    // // End User cap nhat gan nhat
+    
+
     res.render("admin/pages/products-category/detail", {
       pageTitle: "Chi tiết danh mục",
       record: record,
