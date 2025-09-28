@@ -1,35 +1,72 @@
 extends ../../layouts/default.pug
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
+include ../../mixins/sort-role.pug 
+include ../../mixins/form-change-multi-role.pug
 
 block main
   if(role.permissions.includes("role_view"))
-    h1(class="mb-4") Nhóm quyền
-
+    h1(class="mb-4") Danh sách nhóm quyền
+    .card.mb-3
+      .card-header Bộ lọc và Tìm kiếm
+      .card-body
+        .row
+          .col-6
+          .col-6 
+            +search(keyword)
     .card.mb-3
       .card-header Danh sách
       .card-body
         .row
           .col-8
+            if(role.permissions.includes("role_edit"))
+              +form-change-multi-role(`${prefixAdmin}/roles/change-multi?_method=PATCH`)
           .col-4.text-right
             if(role.permissions.includes("role_create"))
               a(
                 href=`${prefixAdmin}/roles/create`
                 class="btn btn-outline-success mb-3"
               ) + Thêm mới
-
-        table(class="table table-hover table-sm")
+          .col-12 
+            .card.mb-3
+              .card-header Sắp xếp
+              .card-body
+                .row
+                  .col-4
+                    +sort-role()
+        table(
+          class="table table-hover table-sm"
+          checkbox-multi
+        )
           thead
             tr
+              th 
+                input(type="checkbox" name="checkall")
               th STT
               th Nhóm quyền
               th Mô tả ngắn
+              th Người tạo
+              th Người chỉnh sửa
               th Hành động
           tbody
             if (records.length > 0)
               each item, index in records
                 tr
+                  th 
+                    input(type="checkbox" name="id" value=item.id)
                   td #{index + 1}
                   td #{item.title}
                   td #{item.description}
+                  td 
+                    b(class="badge badge-info") #{item.userName || "Quản trị viên"}
+                    div #{item.date ? item.date.toLocaleDateString("vi-VN") : "--/--/----"}
+                  td 
+                    if item.updatedBy.length > 0
+                      - const lastUserUpdate = item.updatedBy[item.updatedBy.length - 1];
+                      b(class="badge badge-primary") #{lastUserUpdate.userName}
+                      div #{lastUserUpdate.updatedAt.toLocaleDateString("vi-VN")}
+                    else 
+                      span(class="badge badge-warning") Chưa chỉnh sửa !
                   td
                     a(
                       class = "btn btn-secondary btn-sm"
@@ -52,7 +89,7 @@ block main
                   colspan="4"
                   class="text-center"
                 ) Chưa có nhóm quyền nào được tạo
-    
+    +pagination(pagination)
     form(
       action=""
       method="POST"

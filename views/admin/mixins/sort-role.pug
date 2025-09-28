@@ -1,0 +1,15 @@
+mixin sort-role()
+  div(sort)
+    select(
+      class="form-control"
+      name="sort"
+      sort-select
+    )
+      option(value="createdAt-desc") Thời gian tạo (Mới nhất)
+      option(value="createdAt-asc") Thời gian tạo (Cũ nhất)
+      option(value="title-asc") Tiêu đề A - Z
+      option(value="title-desc") Tiêu đề Z - A
+    button(
+      sort-clear
+      class="btn btn-danger mt-2"
+    ) Clear
