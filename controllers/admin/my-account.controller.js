@@ -36,7 +36,14 @@ module.exports.editPatch = async (req, res) => {
       } else {
         delete req.body.password;
       }
-      await Account.updateOne({ _id: idAccount }, req.body);
+      const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+      };
+      await Account.updateOne({ _id: idAccount }, {
+        ...req.body,
+        $push: { updatedBy: updatedBy }
+      });
       res.redirect(req.get("Referrer") || `${systemConfig.prefixAdmin}/my_account`);
     }
   } catch (error) {
