@@ -41,6 +41,13 @@ block main
     if (product.position)
       div(class="mb-4") Vị trí: 
         b #{product.position}
+    
+    div(class="mb-4")
+      span Sẩn phẩm nổi bật: 
+      if product.featured == "1"
+        span(class="badge badge-danger") Nổi bật
+      else
+        span(class="badge badge-light") Không nổi bật
 
     if (product.description)
       div(class="mb-4") !{product.description}
