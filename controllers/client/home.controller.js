@@ -5,16 +5,25 @@ const productHelper = require("../../helpers/product");
 // [GET] /home
 module.exports.index = async (req, res) => {
   try {
-    const condition = {
+    // Sản phẩm nổi bật
+    const productsFeatured = await Product.find({
       featured: "1",
       deleted: false,
       status: "active"
-    }
-    const productFeatured = await Product.find(condition).limit(8);
-    const newProduct = productHelper.priceNewProducts(productFeatured);
+    }).limit(8);
+    const newProductsFeatured = productHelper.priceNewProducts(productsFeatured);
+    // End Sản phẩm nổi bật
+    // Sản phẩm mới nhất
+    const productsNew = await Product.find({
+      deleted: false,
+      status: "active"
+    }).limit(8).sort({ position: "desc" });
+    const newProductsNew = productHelper.priceNewProducts(productsNew);
+    // End Sản phẩm mới nhất
     res.render("client/pages/home/index", {
       pageTitle: "Trang chủ",
-      productFeatured: newProduct
+      productsFeatured: newProductsFeatured,
+      productsNew: newProductsNew
     });
   } catch (error) {
     console.error(error);
