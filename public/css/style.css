@@ -54,6 +54,18 @@ a:hover{
 .inner-image{
   width: 100%;
   aspect-ratio: 4/3;
+  position: relative;
+}
+.inner-feature{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  background-color: red;
+  color: white;
+  font-weight: 600;
 }
 .inner-image img{
   width: 100%;

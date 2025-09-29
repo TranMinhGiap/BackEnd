@@ -1,5 +1,10 @@
 extends ../../layouts/default.pug
-//- Block main chính là đoạn này ~ lấy đoạn này đặt vào chỗ block main
+include ../../mixins/box-head.pug
+include ../../mixins/product-layout.pug
+
 block main 
-  h1 Page pug home in Layout
-  div #{layoutProductsCategory}
+  .container.my-3
+    .row
+      .col-12
+        +box-head("Sản phẩm nổi bật")
+    +product-grid(productFeatured)
