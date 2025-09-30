@@ -96,3 +96,27 @@ module.exports.delete = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng");
   }
 };
+// [GET] /cart/update/:productId/:quantity
+module.exports.update = async (req, res) => {
+  try {
+    // Lấy thông tin cart thông qua id trong cookie
+    const cart = await Cart.findOne({ _id: req.cookies.cartId });
+    // lấy id product, số lượng cần cập nhật thông qua params
+    const productId = req.params.productId;
+    const quantity = req.params.quantity;
+    // Tiến hành cập nhật giở hành khi biết cart, sản phẩm và số lượng cần update
+    await Cart.updateOne(
+      {
+        _id: cart.id,
+        'products.product_id': productId
+      },
+      {
+        'products.$.quantity': quantity
+      }
+    )
+    res.redirect(req.get("Referrer") || "/products");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi cập nhật sản phẩm trong giỏ hàng");
+  }
+};
