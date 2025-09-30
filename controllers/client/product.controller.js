@@ -26,15 +26,29 @@ module.exports.index = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi hiển thị trang chủ client");
   }
 }
-// [GET] /product/:slug
+// [GET] /product/detail/:slugProduct
 module.exports.detail = async (req, res) => {
   try {
     const find = {
       deleted: false,
-      slug: req.params.slug,
+      slug: req.params.slugProduct,
       status: "active"
     };
     const product = await Product.findOne(find);
+    product.priceNew = productHelper.priceNewProduct(product);
+    // Lấy danh mục của sản phẩm
+    if(product.product_category_id){
+      const idCategory = product.product_category_id;
+      const categoryProduct = await ProductCategory.findOne({
+        _id: idCategory,
+        deleted: false,
+        status: "active"
+      });
+      if(categoryProduct){
+        product.category = categoryProduct;
+        // Luu ca obj thay vi chi luu title
+      }
+    }
     res.render("client/pages/products/detail", {
       pageTitle: product.slug,
       product: product
