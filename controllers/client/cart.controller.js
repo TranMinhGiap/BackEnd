@@ -35,7 +35,7 @@ module.exports.index = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi hiển thị giỏ hàng");
   }
 };
-// [POST] /cart/:productId
+// [POST] /cart/add/:productId
 module.exports.addPost = async (req, res) => {
   try {
     const cartId = req.cookies.cartId;
@@ -73,5 +73,26 @@ module.exports.addPost = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).send("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
+  }
+};
+// [GET] /cart/delete/:productId
+module.exports.delete = async (req, res) => {
+  try {
+    // Lấy thông tin cart thông qua id trong cookie
+    const cart = await Cart.findOne({ _id: req.cookies.cartId });
+    // lấy id product cần xóa thông qua params
+    const productId = req.params.productId;
+    // Tiến hành xóa sản phẩm khi biết id sản phẩm cần xóa + cart (= cu phap mongoose)
+    await Cart.updateOne(
+      {
+        _id: cart.id
+      },{
+        "$pull": { products: { "product_id": productId } }
+      }
+    );
+    res.redirect(req.get("Referrer") || "/products");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng");
   }
 };
