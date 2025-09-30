@@ -2,14 +2,18 @@
 const productRouter = require('./product.route')
 const homeRouter = require('./home.route')
 const searchRouter = require('./search.route')
+const cartRouter = require("./cart.route");
 
 const categoryMiddleware = require("../../middlewares/client/category.middleware");
+const cartMiddleware = require("../../middlewares/client/cart.middleware");
 
 module.exports = (app) => {
   app.use(categoryMiddleware.category)
+  app.use(cartMiddleware.cartId)
   // Tất cả route đều sử dụng middleware này
   app.use('/', homeRouter)
   //Express tự normalize thành / (không bị //). => giống nó tự gộp
   app.use('/products', productRouter)
   app.use('/search', searchRouter)
+  app.use('/cart', cartRouter)
 }
