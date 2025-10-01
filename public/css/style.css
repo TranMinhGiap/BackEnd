@@ -2,6 +2,9 @@
 a:hover{
   text-decoration: none;
 }
+.container.my-5{
+  min-height: 519px;
+}
 /* End Common */
 
 .header {

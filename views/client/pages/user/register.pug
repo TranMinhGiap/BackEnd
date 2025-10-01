@@ -1,0 +1,22 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.my-5
+    .row.justify-content-center
+      .col-8
+        h1.text-center Đăng ký tài khoản
+        form(action="/user/register" method="POST")
+          .form-group
+            label(for="fullName") Họ và tên
+            input#fullName.form-control(type="text" name="fullName" required)
+          
+          .form-group
+            label(for="email") Email
+            input#email.form-control(type="email" name="email" required)
+
+          .form-group
+            label(for="password") Mật khẩu
+            input#password.form-control(type="password" name="password" required)
+          
+          div(class="form-group text-center")
+            button.btn.btn-block.btn-outline-primary(type="submit") Đăng ký
