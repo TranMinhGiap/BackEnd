@@ -39,7 +39,7 @@ block main
                       style="width: 60px"
                       input-change-quantity
                     )
-                  td #{item.totalPrice}$
+                  td #{item.totalPrice.toFixed(1)}$
                   td
                     a(
                       href=`/cart/delete/${item.product_id}`

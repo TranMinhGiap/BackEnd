@@ -31,7 +31,7 @@ block main
                   td #{item.productInfo.title}
                   td #{item.productInfo.priceNew}$
                   td #{item.quantity}
-                  td #{item.totalPrice}$
+                  td #{item.totalPrice.toFixed(1)}$
             else
               tr
                 td(colspan="6") Giỏ hàng trống
