@@ -24,6 +24,17 @@ module.exports.login = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi đăng ký tài khoản");
   }
 };
+// [GET] /user/logout
+module.exports.logout = async (req, res) => {
+  try {
+    res.clearCookie("tokenUser");
+    // Chuyển hướng về trang đăng nhập
+    res.redirect(`/user/login`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi đăng đăng xuất tài khoản");
+  }
+};
 // [POST] /user/register
 module.exports.registerPost = async (req, res) => {
   try {
