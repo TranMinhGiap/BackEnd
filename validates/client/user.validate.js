@@ -10,3 +10,9 @@ module.exports.loginPost = async (req, res, next) => {
   }
   next();
 }
+module.exports.forgotPasswordPost = async (req, res, next) => {
+  if(!req.body.email){
+    return res.status(400).send("Vui lòng nhập đầy đủ thông tin");
+  }
+  next();
+}
