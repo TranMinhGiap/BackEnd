@@ -24,6 +24,19 @@ header.header
       .col-5 
         .inner-menu
           ul 
+            if !user
+              li
+                a(href="/user/login") Đăng nhập
+              li
+                a(href="/user/register") Đăng ký
+            else 
+              li 
+                h4 Xin chào, #{user.fullName} !
+              li
+                a(
+                  href="/user/logout"
+                  class="btn btn-sm btn-outline-danger"
+                ) Đăng xuất
             li
               a(href="/") Trang Chủ
             li(class="sub-menu")
@@ -32,5 +45,3 @@ header.header
                 +sub-menu(layoutProductsCategory, pathProduct)
             li
               a(href="/cart") Giỏ hàng (#{miniCart ? miniCart.totalQuantity : 0})
-            li
-              a(href="/user/register") Đăng ký

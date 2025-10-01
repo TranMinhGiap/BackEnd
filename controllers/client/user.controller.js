@@ -13,6 +13,17 @@ module.exports.register = async (req, res) => {
     return res.status(500).send("Có lỗi xảy ra khi đăng ký tài khoản");
   }
 };
+// [GET] /user/login
+module.exports.login = async (req, res) => {
+  try {
+    res.render("client/pages/user/login", {
+      pageTitle: "Đăng nhập tài khoản"
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi đăng ký tài khoản");
+  }
+};
 // [POST] /user/register
 module.exports.registerPost = async (req, res) => {
   try {
@@ -31,11 +42,38 @@ module.exports.registerPost = async (req, res) => {
     const user = new User(req.body);
     await user.save();
     // Lưu token vào cookie
-    res.cookie("token", user.tokenUser);
+    res.cookie("tokenUser", user.tokenUser);
     // Chuyển hướng về trang chủ
     res.redirect(`/`);
   } catch (error) {
     console.error(error);
     return res.status(500).send("Có lỗi xảy ra khi đăng ký tài khoản");
+  }
+};
+// [POST] /user/login
+module.exports.loginPost = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const password = md5(req.body.password);
+    // Tìm người dùng
+    const user = await User.findOne({
+      email: email,
+      deleted: false
+    });
+    if(!user){
+      return res.status(400).send("Email không tồn tại");
+    }
+    if(user.password !== password){
+      return res.status(400).send("Mật khẩu không đúng");
+    }
+    if(user.status === "inactive"){
+      return res.status(400).send("Tài khoản đã bị khóa");
+    }
+    res.cookie("tokenUser", user.tokenUser);
+    // Chuyển hướng về trang chủ
+    res.redirect(`/`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi đăng nhập tài khoản");
   }
 };
