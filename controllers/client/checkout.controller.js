@@ -89,9 +89,47 @@ module.exports.order = async (req, res) => {
         { $inc: { stock: -item.quantity } }
       );
     }
-    res.send(`/checkout/success/${order.id}`);
+    res.redirect(`/checkout/success/${order.id}`);
   } catch (error) {
     console.error(error);
     return res.status(500).send("Có lỗi xảy ra khi đặt hàng");
+  }
+};
+
+// [GET] /checkout/order/success/:orderId
+module.exports.orderSuccess = async (req, res) => {
+  try {
+    // Lấy id của đơn hàng thông qua params
+    const orderId = req.params.orderId;
+    // Tìm đơn hàng trong database
+    const order = await Order.findOne({ _id: orderId });
+    if (!order) {
+      return res.status(404).send("Đơn hàng không tồn tại");
+    }
+    // Tính tổng tiền đơn hàng, tiền cho mỗi mặt hàng
+    let totalPriceOrder = 0;
+    for (const product of order.products) {
+      const productInfo = await Product.findOne({
+        _id: product.product_id,
+        deleted: false,
+        status: "active"
+      }).select("title thumbnail");
+      product.productInfo = productInfo;
+      // Tính tổng tiền của từng sản phẩm trong đơn hàng
+      let totalPrice = product.price * product.quantity;
+      totalPriceOrder += totalPrice;
+      // Gán tổng tiền vào từng sản phẩm để hiển thị ra view
+      product.totalPrice = totalPrice;
+    }
+    // Gán tổng tiền đơn hàng vào order để hiển thị ra view
+    order.totalPriceOrder = totalPriceOrder;
+    
+    res.render("client/pages/checkout/success", {
+      pageTitle: "Đặt hàng thành công",
+      order: order
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Có lỗi xảy ra khi đặt hàng thành công ");
   }
 };
