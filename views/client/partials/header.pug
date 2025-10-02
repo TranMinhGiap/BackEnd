@@ -31,7 +31,7 @@ header.header
                 a(href="/user/register") Đăng ký
             else 
               li 
-                h4 Xin chào, #{user.fullName} !
+                a(href="/user/info" class="btn btn-primary") #{user.fullName}
               li
                 a(
                   href="/user/logout"

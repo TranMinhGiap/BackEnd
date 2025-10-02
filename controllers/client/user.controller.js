@@ -214,3 +214,20 @@ module.exports.resetPasswordPost = async (req, res) => {
   // Do khi xác nhận email thì đã gửi token nên coi nhu đăng nhập vào hệ thống luôn nên không cần đăng nhập lại nữa
   res.redirect('/');
 };
+// [GET] /user/info
+module.exports.info = async (req, res) => {
+  // Lấy thông tin user thông qua token để hiển thị thông tin view
+  const tokenUser = req.cookies.tokenUser;
+  // Do không auth nên phải kiểm tra token nhỡ người khác gửi mà ta cũng cần biết ai thông qua token gửi để lấy thông tin
+  if(!tokenUser){
+    return res.redirect('/user/login');
+  }
+  const user = await User.findOne({ tokenUser: tokenUser, deleted: false, status: "active" });
+  if(!user){
+    return res.redirect('/user/login');
+  }
+  res.render("client/pages/user/info", {
+    pageTitle: "Thông tin tài khoản",
+    user: user
+  });
+};
