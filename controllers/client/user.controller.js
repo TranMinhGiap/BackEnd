@@ -2,9 +2,13 @@ const User = require("../../models/user.modal");
 const ForgotPassword = require("../../models/forgot-password");
 
 const generateHelper = require("../../helpers/generate");
+// Send mail
+const sendMailHelper = require("../../helpers/send-mail");
+// End Send mail
 // MD5
 const md5 = require('md5');
 // MD5
+
 // [GET] /user/register
 module.exports.register = async (req, res) => {
   try {
@@ -88,7 +92,7 @@ module.exports.otpPasswordPost = async (req, res) => {
         res.cookie("tokenUser", user.tokenUser);
       }
       // Chuyển hướng về trang đổi mật khẩu
-      res.redirect(`/user/password/reset-password?email=${email}`);
+      res.redirect(`/user/password/reset`);
     }
   } catch (error) {
     console.error(error);
@@ -120,6 +124,10 @@ module.exports.forgotPasswordPost = async (req, res) => {
     });
     await forgotPassword.save();
     // Gửi mã OTP về email
+    const subject = "Mã OTP lấy lại mật khẩu";
+    const html = `<p>Mã OTP của bạn là: <b>${opt}</b>. Mã có hiệu lực trong 3 phút !</p>`;
+    // Gọi hàm gửi mail
+    sendMailHelper.sendMail(email, subject, html);
     res.redirect(`/user/password/otp?email=${email}`);
   } catch (error) {
     console.error(error);
@@ -178,4 +186,31 @@ module.exports.loginPost = async (req, res) => {
     console.error(error);
     return res.status(500).send("Có lỗi xảy ra khi đăng nhập tài khoản");
   }
+};
+// [GET] /user/password/reset
+module.exports.resetPassword = async (req, res) => {
+  res.render("client/pages/user/reset-password", {
+    pageTitle: "Đặt lại mật khẩu"
+  });
+};
+// [GET] /user/password/reset
+module.exports.resetPasswordPost = async (req, res) => {
+  const password = req.body.password;
+  // Lấy token để xác nhận user và tìm user cần đổi mật khẩu
+  const tokenUser = req.cookies.tokenUser;
+  // Không có token thì không phải do chính user gửi yêu cầu, vì khi gửi xác nhận otp đã gửi token cho user rồi
+  if(!tokenUser){
+    return res.status(400).send("Yêu cầu không hợp lệ");
+  }
+  const user = await User.findOne({ tokenUser: tokenUser, deleted: false });
+  if(!user){
+    return res.status(400).send("Yêu cầu không hợp lệ");
+  }
+  if(user.status === "inactive"){
+    return res.status(400).send("Tài khoản đã bị khóa");
+  }
+  // Đổi mật khẩu cho user
+  await User.updateOne({ _id: user.id }, { password: md5(password) });
+  // Do khi xác nhận email thì đã gửi token nên coi nhu đăng nhập vào hệ thống luôn nên không cần đăng nhập lại nữa
+  res.redirect('/');
 };

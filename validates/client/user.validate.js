@@ -16,3 +16,12 @@ module.exports.forgotPasswordPost = async (req, res, next) => {
   }
   next();
 }
+module.exports.resetPasswordPost = async (req, res, next) => {
+  if(!req.body.password || !req.body.confirmPassword){
+    return res.status(400).send("Vui lòng nhập đầy đủ thông tin");
+  }
+  if(req.body.password !== req.body.confirmPassword){
+    return res.status(400).send("Mật khẩu không khớp");
+  }
+  next();
+}
