@@ -49,6 +49,13 @@ app.locals.prefixAdmin = systemConfig.prefixAdmin;
 // ============= routes ==============
 routeAdmin(app)
 route(app)
+
+
+app.use((req, res) => {
+  res.status(404).render('client/pages/errors/404', { 
+    pageTitle: "404 Not Found"
+  });
+});
 // ============= end routes ==============
 
 // ============ START SERVER ============
