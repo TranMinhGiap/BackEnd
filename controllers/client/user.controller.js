@@ -1,4 +1,5 @@
 const User = require("../../models/user.modal");
+const Cart = require("../../models/cart.modal");
 const ForgotPassword = require("../../models/forgot-password");
 
 const generateHelper = require("../../helpers/generate");
@@ -180,6 +181,12 @@ module.exports.loginPost = async (req, res) => {
       return res.status(400).send("Tài khoản đã bị khóa");
     }
     res.cookie("tokenUser", user.tokenUser);
+    // Lưu userId vào collection carts
+    await Cart.updateOne({
+      _id: req.cookies.cartId
+    }, {
+      user_id: user.id  
+    });
     // Chuyển hướng về trang chủ
     res.redirect(`/`);
   } catch (error) {
